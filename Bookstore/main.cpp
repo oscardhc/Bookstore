@@ -7,9 +7,22 @@
 //
 
 #include <iostream>
+#include "Person.hpp"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    std::cout << "Hello, World!\n";
+    auto a = Person("abcdef" , "123456" , "哈哈哈哈哈", 233);
+    auto b = Person("hhhhhhh" , "xyzxyz" , "嘻嘻嘻嘻", 100);
+    
+    Users x("./dat.bin", 0);
+    x.addPerson(&a);
+    x.addPerson(&a);
+    x.addPerson(&b);
+    x.addPerson(&b);
+    a.print();
+    
+    auto c = x.getPerson(3);
+    c.print();
+    
     return 0;
 }
