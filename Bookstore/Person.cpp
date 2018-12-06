@@ -60,6 +60,7 @@ size_t Users::addPerson(Person *p) {
     } else {
         tot++;
     }
+    file.seekp(sizeof(int) + pos * UserSIZE, std::ios::beg);
     p->writeToFile(&file);
     return pos;
 }
