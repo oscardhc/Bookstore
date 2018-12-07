@@ -27,21 +27,6 @@ class Book {
 public:
     Book();
     Book(char const *i, char const *n, char const *a, char const *d, const double p, const int s);
-    Book(std::fstream *file);
-    void writeToFile(std::fstream *file);
-};
-
-class Books {
-    std::fstream file;
-    std::string filename;
-    int tot;
-    std::queue<int> q;
-    
-public:
-    Books(std::string str, int flag);
-    ~Books();
-    Book getBook(int index);
-    size_t addBook(Book *b);
 };
 
 #endif /* Book_hpp */

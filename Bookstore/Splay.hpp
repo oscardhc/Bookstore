@@ -13,68 +13,33 @@
 #include <string.h>
 #include <fstream>
 #include <queue>
+#include "DataBase.hpp"
 
 class Node {
-    int val, id;
-    Node *lson, *rson;
+public:
+    int val, id, idx;
+    int lson, rson;
     
 public:
-    Node():val(0), lson(nullptr), rson(nullptr) {
+    Node():val(0), lson(0), rson(0) {
         
     }
     Node(const int v, const int i):val(v), id(i) {
     }
-    Node(std::fstream *file) {
-        file->read((char*)&val, sizeof(int));
-        file->read((char*)&id, sizeof(int));
-        file->read((char*)&lson, sizeof(int));
-        file->read((char*)&rson, sizeof(int));
-    }
-    void writeToFile(std::fstream *file) {
-        file->write((char*)&val, sizeof(int));
-        file->write((char*)&id, sizeof(int));
-        file->write((char*)&lson, sizeof(int));
-        file->write((char*)&rson, sizeof(int));
-    }
 };
 
-const int NodeSize = sizeof(Node);
+const int NodeSize = sizeof(int) * 4;
 
-class Splay {
-    std::fstream file;
-    std::string filename;
-    int tot;
-    std::queue<int> q;
+class Splay : DataBase<Node, NodeSize> {
     
 public:
-    Splay(std::string str, int flag) {
-        if (flag) {
-            file = std::fstream(filename, std::ios::in|std::ios::out|std::ios::binary);
-            file.read((char*)&tot, sizeof(int));
-        } else {
-            tot = 0;
-            file = std::fstream(filename, std::ios::trunc|std::ios::in|std::ios::out|std::ios::binary);
-            file.write((char*)&tot, sizeof(int));
-        }
-    }
-    ~Splay() {
-        file.close();
-    }
-    Node getNode(int index) {
-        file.seekg(sizeof(int) + index * NodeSize, std::ios::beg);
-        return Node(&file);
-    }
-    int addNode(Node *n) {
-        int pos = tot;
-        if (!q.empty()) {
-            pos = q.front();
-            q.pop();
-        } else {
-            tot++;
-        }
-        file.seekp(sizeof(int) + pos * NodeSize, std::ios::beg);
-        n->writeToFile(&file);
-        return pos;
+    void rotate(int index) {
+        Node cur = getElement(index);
+        Node lson = getElement(cur.lson);
+        Node rson = getElement(cur.rson);
+        
+        
+        
     }
 };
 

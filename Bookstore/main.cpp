@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include "DataBase.hpp"
 #include "Person.hpp"
 
 int main(int argc, const char * argv[]) {
@@ -14,15 +15,13 @@ int main(int argc, const char * argv[]) {
     auto a = Person("abcdef" , "123456" , "哈哈哈哈哈", 233);
     auto b = Person("hhhhhhh" , "xyzxyz" , "嘻嘻嘻嘻", 100);
     
-    Users x("./dat.bin", 0);
-    x.addPerson(&a);
-    x.addPerson(&a);
-    x.addPerson(&b);
-    x.addPerson(&b);
-    a.print();
+    DataBase<Person, UserSIZE> data("./dat.bi");
+    data.addElement(&a);
+    data.addElement(&b);
+    data.addElement(&a);
+    data.addElement(&b);
     
-    auto c = x.getPerson(3);
-    c.print();
+    data.getElement(0).print();
     
     return 0;
 }

@@ -27,23 +27,7 @@ private:
 public:
     Person();
     Person(char const *u, char const *p, char const *n, int l);
-    Person(std::fstream *file);
-    void writeToFile(std::fstream *file);
     void print();
 };
-
-class Users {
-    std::fstream file;
-    std::string filename;
-    std::queue<int> emp;
-    int tot;
-    
-public:
-    Users(std::string str, int flag);
-    ~Users();
-    Person getPerson(int index);
-    size_t addPerson(Person *p);
-};
-
 
 #endif /* Person_hpp */
