@@ -10,7 +10,8 @@
 		553D1D9F21AE359F00BCC85E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 553D1D9E21AE359F00BCC85E /* main.cpp */; };
 		5595807F21B7A43E00D9F1A5 /* Person.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5595807D21B7A43E00D9F1A5 /* Person.cpp */; };
 		5595808221B8198600D9F1A5 /* Book.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5595808021B8198600D9F1A5 /* Book.cpp */; };
-		559DC33A21B8300000B30947 /* Splay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559DC33821B8300000B30947 /* Splay.cpp */; };
+		559CF9BD21BA46AC00A40366 /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559CF9BB21BA46AC00A40366 /* Block.cpp */; };
+		559CF9C021BAADA900A40366 /* BookStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559CF9BE21BAADA900A40366 /* BookStore.cpp */; };
 		559DC33D21B8C2EC00B30947 /* DataBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559DC33B21B8C2EC00B30947 /* DataBase.cpp */; };
 /* End PBXBuildFile section */
 
@@ -33,8 +34,11 @@
 		5595807E21B7A43E00D9F1A5 /* Person.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Person.hpp; sourceTree = "<group>"; };
 		5595808021B8198600D9F1A5 /* Book.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Book.cpp; sourceTree = "<group>"; };
 		5595808121B8198600D9F1A5 /* Book.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Book.hpp; sourceTree = "<group>"; };
-		559DC33821B8300000B30947 /* Splay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Splay.cpp; sourceTree = "<group>"; };
-		559DC33921B8300000B30947 /* Splay.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Splay.hpp; sourceTree = "<group>"; };
+		559CF9BB21BA46AC00A40366 /* Block.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
+		559CF9BC21BA46AC00A40366 /* Block.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Block.hpp; sourceTree = "<group>"; };
+		559CF9BE21BAADA900A40366 /* BookStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BookStore.cpp; sourceTree = "<group>"; };
+		559CF9BF21BAADA900A40366 /* BookStore.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BookStore.hpp; sourceTree = "<group>"; };
+		559CF9C121BAADF400A40366 /* 网上书店管理系统作业要求v6.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "网上书店管理系统作业要求v6.pdf"; sourceTree = SOURCE_ROOT; };
 		559DC33B21B8C2EC00B30947 /* DataBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DataBase.cpp; sourceTree = "<group>"; };
 		559DC33C21B8C2EC00B30947 /* DataBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBase.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,10 +74,13 @@
 			isa = PBXGroup;
 			children = (
 				553D1D9E21AE359F00BCC85E /* main.cpp */,
+				559CF9BE21BAADA900A40366 /* BookStore.cpp */,
+				559CF9BF21BAADA900A40366 /* BookStore.hpp */,
+				559CF9C121BAADF400A40366 /* 网上书店管理系统作业要求v6.pdf */,
 				559DC33B21B8C2EC00B30947 /* DataBase.cpp */,
 				559DC33C21B8C2EC00B30947 /* DataBase.hpp */,
-				559DC33821B8300000B30947 /* Splay.cpp */,
-				559DC33921B8300000B30947 /* Splay.hpp */,
+				559CF9BB21BA46AC00A40366 /* Block.cpp */,
+				559CF9BC21BA46AC00A40366 /* Block.hpp */,
 				5595808021B8198600D9F1A5 /* Book.cpp */,
 				5595808121B8198600D9F1A5 /* Book.hpp */,
 				5595807D21B7A43E00D9F1A5 /* Person.cpp */,
@@ -141,8 +148,9 @@
 				5595808221B8198600D9F1A5 /* Book.cpp in Sources */,
 				5595807F21B7A43E00D9F1A5 /* Person.cpp in Sources */,
 				559DC33D21B8C2EC00B30947 /* DataBase.cpp in Sources */,
+				559CF9BD21BA46AC00A40366 /* Block.cpp in Sources */,
+				559CF9C021BAADA900A40366 /* BookStore.cpp in Sources */,
 				553D1D9F21AE359F00BCC85E /* main.cpp in Sources */,
-				559DC33A21B8300000B30947 /* Splay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
