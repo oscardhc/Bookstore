@@ -12,8 +12,10 @@
 #include <stdio.h>
 #include "DataBase.hpp"
 #include <climits>
+#include <algorithm>
+#include <cstring>
 
-const int sqrSize = 100;
+const int sqrSize = 200;
 
 class Block {
     
@@ -44,7 +46,10 @@ public:
         file.write((char*)&tot, sizeof(int));
         file.close();
     }
-    Blocks(std::string _filename) {
+    Blocks() {
+        
+    }
+    void init (std::string _filename) {
         filename = _filename;
         file = std::fstream(filename, std::ios::app);
         file.close();
@@ -105,23 +110,25 @@ public:
                 tmp.maxVal = std::max(tmp.maxVal, key);
                 tmp.minVal = std::min(tmp.minVal, key);
                 if (tmp.tot == sqrSize) {
-                    int midVal = 0;
-                    for (int l = tmp.minVal, r = tmp.maxVal; l <= r; ) {
-                        int m = (1ll * l + r) / 2, cnt = 0;
-                        
-                        for (int j = 0; j < sqrSize; j++) {
-                            if (tmp.key[j] <= m) {
-                                cnt++;
-                            }
-                        }
-                        if (cnt <= sqrSize / 2) {
-                            l = m + 1;
-                            midVal = m;
-                        } else {
-                            r = m - 1;
-                        }
-                        
-                    }
+                    int midVal = 0, midary[sqrSize] = {0};
+                    memcpy(midary, tmp.key, sqrSize * sizeof(int));
+                    std::nth_element(midary, midary + sqrSize / 2, midary + sqrSize);
+                    midVal = midary[sqrSize / 2];
+//                    for (int l = tmp.minVal, r = tmp.maxVal; l <= r; ) {
+//                        int m = (1ll * l + r) / 2, cnt = 0;
+//
+//                        for (int j = 0; j < sqrSize; j++) {
+//                            if (tmp.key[j] <= m) {
+//                                cnt++;
+//                            }
+//                        }
+//                        if (cnt <= sqrSize / 2) {
+//                            l = m + 1;
+//                            midVal = m;
+//                        } else {
+//                            r = m - 1;
+//                        }
+//                    }
                     if (tmp.minVal == tmp.maxVal - 1) {
                         midVal = tmp.minVal;
                     }
