@@ -9,6 +9,7 @@
 #include <iostream>
 #include "DataBase.hpp"
 #include "Person.hpp"
+#include "Block.hpp"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -23,5 +24,14 @@ int main(int argc, const char * argv[]) {
     
     data.getElement(0).print();
     
+    Blocks blk("./blk.bi");
+    freopen("hhh.out", "w", stdout);
+    std::vector< std::pair<int,int> > v;
+    for (int i = 1; i < 20000; i++) {
+        int cur = rand();
+        blk.insertVal(cur, i);
+//        blk.print();
+    }
+    blk.print();
     return 0;
 }

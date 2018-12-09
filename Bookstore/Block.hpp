@@ -11,23 +11,30 @@
 
 #include <stdio.h>
 #include "DataBase.hpp"
+#include <climits>
 
-const int sqrSize = 105;
+const int sqrSize = 100;
 
 class Block {
     
 public:
     int minVal, maxVal;
-    int pre, nxt;
+    int nxt;
     int tot, key[sqrSize], id[sqrSize];
+    
+    void reset() {
+        tot = 0;
+        minVal = INT_MAX;
+        maxVal = INT_MIN;
+    }
     
 };
 
-const int BlockSize = (sqrSize * 2 + 5) * sizeof(int);
-const int BaseSize = 2 * sizeof(int);
+const int BlockSize = (4 + sqrSize * 2) * sizeof(int);
+const int BaseSize = 1 * sizeof(int);
 
 class Blocks {
-    int tot, lst;
+    int tot;
     std::fstream file;
     std::string filename;
     
@@ -35,7 +42,6 @@ public:
     ~Blocks() {
         file.seekp(0, std::ios::beg);
         file.write((char*)&tot, sizeof(int));
-        file.write((char*)&lst, sizeof(int));
         file.close();
     }
     Blocks(std::string _filename) {
@@ -47,48 +53,62 @@ public:
         file.seekg(0, std::ios::end);
         if (file.tellg() == 0) {
             file.seekp(0, std::ios::beg);
-            tot = lst = 0;
+            tot = 1;
+            Block blk;
+            blk.reset();
             file.write((char*)&tot, sizeof(int));
-            file.write((char*)&lst, sizeof(int));
+            file.write((char*)&blk, BlockSize);
         } else {
             file.seekg(0, std::ios::beg);
             file.read((char*)&tot, sizeof(int));
-            file.read((char*)&lst, sizeof(int));
+        }
+    }
+    void print() {
+        Block tmp;
+        int cur = 0;
+        for (int i = 0; i < tot; i++) {
+            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.read((char*)&tmp, BlockSize);
+            
+            printf("BLOCK %d (%d) tot:%d max:%d min:%d nx:%d\n", cur, i, tmp.tot, tmp.maxVal, tmp.minVal, tmp.nxt);
+            for (int j = 0; j < tmp.tot; j++) {
+                printf("            %d %d\n", tmp.key[j], tmp.id[j]);
+            }
+            
+            cur = tmp.nxt;
         }
     }
     void addBlock(Block *t) {
-        tot++;
-        int tmp[4] = {0};
-        file.seekp(BaseSize * lst , std::ios::beg);
-        file.read((char*)tmp, 4 * sizeof(int));
-        tmp[3] = tot;
-        file.write((char*)tmp, 4 * sizeof(int));
-        file.seekp(BaseSize * (tot - 1), std::ios::beg);
-        t->pre = lst;
-        lst = tot;
+        file.seekp(BaseSize + tot * BlockSize , std::ios::beg);
         file.write((char*)t, BlockSize);
+        tot++;
     }
     void insertVal(int key, int id) {
+//        printf("...........%d %d\n", key, id);
         Block tmp;
-        file.seekp(BaseSize, std::ios::beg);
+        int cur = 0;
         for (int i = 0; i < tot; i++) {
-            file.read((char*)&tmp, 4 * sizeof(int));
+            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.read((char*)&tmp, 3 * sizeof(int));
             
-            if (tmp.minVal > key || tmp.maxVal < key) {
-                file.seekp(BaseSize + tmp.nxt, std::ios::beg);
+            if (tmp.tot > 0 && tmp.maxVal < key && i < tot - 1) {
+                cur = tmp.nxt;
                 continue;
             } else {
                 
-                file.seekp(-4 * sizeof(int), std::ios::cur);
+                file.seekp(-3 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);
                 
                 tmp.tot++;
-                tmp.key[tmp.tot] = key;
-                tmp.id[tmp.tot] = id;
-                if (tmp.tot == sqrSize - 1) {
+                tmp.key[tmp.tot - 1] = key;
+                tmp.id[tmp.tot - 1] = id;
+                tmp.maxVal = std::max(tmp.maxVal, key);
+                tmp.minVal = std::min(tmp.minVal, key);
+                if (tmp.tot == sqrSize) {
                     int midVal = 0;
                     for (int l = tmp.minVal, r = tmp.maxVal; l <= r; ) {
-                        int m = (l + r) >> 1, cnt = 0;
+                        int m = (1ll * l + r) / 2, cnt = 0;
+                        
                         for (int j = 0; j < sqrSize; j++) {
                             if (tmp.key[j] <= m) {
                                 cnt++;
@@ -100,22 +120,42 @@ public:
                         } else {
                             r = m - 1;
                         }
+                        
                     }
-                    tmp.tot = 0;
+                    if (tmp.minVal == tmp.maxVal - 1) {
+                        midVal = tmp.minVal;
+                    }
                     Block blk;
+                    tmp.reset();
+                    blk.reset();
                     for (int j = 0; j < sqrSize; j++) {
                         if (tmp.key[j] <= midVal) {
                             tmp.key[tmp.tot] = tmp.key[j];
                             tmp.id[tmp.tot] = tmp.id[j];
+                            tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
+                            tmp.maxVal = std::max(tmp.maxVal, tmp.key[j]);
                             tmp.tot++;
                         } else {
                             blk.key[blk.tot] = tmp.key[j];
                             blk.id[blk.tot] = tmp.id[j];
+                            blk.minVal = std::min(blk.minVal, tmp.key[j]);
+                            blk.maxVal = std::max(blk.maxVal, tmp.key[j]);
                             blk.tot++;
                         }
                     }
-                    break;
+                    blk.nxt = tmp.nxt;
+                    tmp.nxt = tot;
+                    
+                    file.seekp(-BlockSize, std::ios::cur);
+                    file.write((char*)&tmp, BlockSize);
+                    
+                    addBlock(&blk);
+                } else {
+                    file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+                    file.write((char*)&tmp, BlockSize);
                 }
+                
+                break;
             }
         }
     }
