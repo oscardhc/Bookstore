@@ -99,14 +99,39 @@ public:
     }
     void show(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"") {
         std::vector<int> v;
+        std::vector<Book> bookToShow;
         if (isbn != "\"") {
-            v = iIndex.qryforVal(<#int key#>);
+            v = iIndex.qryforVal(strToNum(isbn));
+            for (int i : v) {
+                Book hhh = bData.getElement(i);
+                if (hhh.ISBN == isbn) {
+                    bookToShow.push_back(hhh);
+                }
+            }
         } else if (name != "\"") {
-            
+            v = iIndex.qryforVal(strToNum(name));
+            for (int i : v) {
+                Book hhh = bData.getElement(i);
+                if (hhh.name == name) {
+                    bookToShow.push_back(hhh);
+                }
+            }
         } else if (author != "\"") {
-            
+            v = iIndex.qryforVal(strToNum(author));
+            for (int i : v) {
+                Book hhh = bData.getElement(i);
+                if (hhh.author == author) {
+                    bookToShow.push_back(hhh);
+                }
+            }
         } else if (keyword != "\"") {
-            
+            v = iIndex.qryforVal(strToNum(keyword));
+            for (int i : v) {
+                Book hhh = bData.getElement(i);
+                if (hhh.keyword == keyword) {
+                    bookToShow.push_back(hhh);
+                }
+            }
         }
     }
     void showfinance() {
