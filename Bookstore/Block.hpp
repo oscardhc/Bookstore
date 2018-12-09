@@ -101,14 +101,22 @@ public:
                             r = m - 1;
                         }
                     }
-                    Block nblk;
+                    tmp.tot = 0;
+                    Block blk;
                     for (int j = 0; j < sqrSize; j++) {
-//                        if ()
+                        if (tmp.key[j] <= midVal) {
+                            tmp.key[tmp.tot] = tmp.key[j];
+                            tmp.id[tmp.tot] = tmp.id[j];
+                            tmp.tot++;
+                        } else {
+                            blk.key[blk.tot] = tmp.key[j];
+                            blk.id[blk.tot] = tmp.id[j];
+                            blk.tot++;
+                        }
                     }
+                    break;
                 }
-                
             }
-            
         }
     }
 };
