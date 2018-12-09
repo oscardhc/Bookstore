@@ -16,11 +16,17 @@
 #include "Book.hpp"
 #include "DataBase.hpp"
 #include "Block.hpp"
+#include "Trade.hpp"
 
 class BookStore {
     Person curUser;
+    int curUserIndex;
     Book curBook;
+    int curBookIndex;
     Blocks iIndex, nIndex, aIndex, kIndex, pIndex;
+    DataBase<Book, sizeof(Book)> bData;
+    DataBase<Person, sizeof(Person)> pData;
+    DataBase<Trade, sizeof(Trade)> tData;
     
 public:
     BookStore() {
@@ -29,10 +35,13 @@ public:
         aIndex.init("./author_index.bi");
         kIndex.init("./keyword_index.bi");
         pIndex.init("./price_index.bi");
+        bData.init("./book_data.bi");
+        pData.init("./person_data.bi");
+        tData.init("./trade_data.bi");
     }
     
     int strToNum(std::string str) {
-        int n = strlen(str.c_str()), bs = 131;
+        int n = (int)strlen(str.c_str()), bs = 131;
         long long ret = 0;
         for (int i = 0; i < n; i++) {
             ret = ret * bs + str.c_str()[i];
@@ -49,10 +58,19 @@ public:
     void load() {
         
     }
-    void select(std::string keyword, std::string val) {
-    
+    void select(std::string isbn) {
+        int num = strToNum(isbn);
+        auto v = iIndex.qryforVal(num);
+        if (v.empty()) {
+            Book bk(isbn.c_str(), "", "", "", 0, 0);
+            bData.addElement(&bk);
+        } else {
+            curBookIndex = v[0];
+            curBook = bData.getElement(curBookIndex);
+        }
     }
     void su(std::string username, std::string password) {
+        
     }
     void useradd() {
         
@@ -66,14 +84,30 @@ public:
     void pswd() {
         
     }
-    void modify() {
-        
+    void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
+        if (isbn != "\"") memcpy(curBook.ISBN, isbn.c_str(), ISBNSize);
+        if (name != "\"") memcpy(curBook.name, name.c_str(), NameSize);
+        if (author != "\"") memcpy(curBook.author, author.c_str(), NameSize);
+        if (keyword != "\"") memcpy(curBook.keyword, keyword.c_str(), NameSize);
+        if (price != -1) curBook.price = price;
+        bData.replaceElement(curBookIndex, &curBook);
     }
-    void import() {
-        
+    void import(int quantity, double totalPrice) {
+        curBook.stock += quantity;
+        Trade tmp(0, totalPrice);
+        tData.addElement(&tmp);
     }
-    void show() {
-        
+    void show(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"") {
+        std::vector<int> v;
+        if (isbn != "\"") {
+            v = iIndex.qryforVal(<#int key#>);
+        } else if (name != "\"") {
+            
+        } else if (author != "\"") {
+            
+        } else if (keyword != "\"") {
+            
+        }
     }
     void showfinance() {
         

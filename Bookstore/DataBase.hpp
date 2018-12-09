@@ -23,7 +23,10 @@ class DataBase {
     int stack[StackSize];
     
 public:
-    DataBase(std::string f) {
+    DataBase() {
+        
+    }
+    void init(std::string f) {
         filename = f;
         file = std::fstream(filename, std::ios::app);
         file.close();
@@ -80,7 +83,7 @@ public:
         return pos;
     }
     
-    int replaceElement(int index, T *t) {
+    void replaceElement(int index, T *t) {
         file.seekp(BaseSize + DataSize * index, std::ios::beg);
         file.write((char*)t, DataSize);
     }

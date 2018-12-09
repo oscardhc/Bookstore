@@ -7,11 +7,11 @@
 //
 
 #include <iostream>
-#include "BookStore.hpp"
+#include "Bookstore.hpp"
 
 int main(int argc, const char * argv[]) {
     
-    BookStore a;
+//    BookStore a;
     
 //    auto a = Person("abcdef" , "123456" , "哈哈哈哈哈", 233);
 //    auto b = Person("hhhhhhh" , "xyzxyz" , "嘻嘻嘻嘻", 100);
@@ -24,15 +24,20 @@ int main(int argc, const char * argv[]) {
 //    
 //    data.getElement(0).print();
     
-//    Blocks blk("./blk.bi");
+//    Blocks blk;
+//    blk.init("./blk.bi");
 //    freopen("hhh.out", "w", stdout);
-//    std::vector< std::pair<int,int> > v;
-//    for (int i = 1; i < 20000; i++) {
-//        int cur = rand();
+//    for (int i = 1; i < 40000; i++) {
+//        int cur = rand() % 10000;
 //        blk.insertVal(cur, i);
-//        blk.print();
 //    }
 //    blk.print();
+//
+//    auto v = blk.qryforVal(3);
+//    
+//    for (int i = 0; i < v.size(); i++) {
+//        printf(" > %d %d\n", i, v[i]);
+//    }
     
     return 0;
 }

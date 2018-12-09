@@ -13,6 +13,7 @@
 #include "DataBase.hpp"
 #include <climits>
 #include <algorithm>
+#include <vector>
 #include <cstring>
 
 const int sqrSize = 200;
@@ -165,6 +166,30 @@ public:
                 break;
             }
         }
+    }
+    std::vector<int> qryforVal(int key) {
+        Block tmp;
+		std::vector<int> ret;
+        int cur = 0;
+        for (int i = 0; i < tot; i++, cur = tmp.nxt) {
+            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.read((char*)&tmp, 3 * sizeof(int));
+            
+            if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
+				file.seekg(-3 * sizeof(int), std::ios::cur);
+				file.read((char*)&tmp, BlockSize);
+				for (int j = 0; j < tmp.tot; j++) {
+					if (tmp.key[j] == key) {
+                        printf("%d %d %d %d\n", cur, j, tmp.key[j], tmp.id[j]);
+						ret.push_back(tmp.id[j]);
+					}
+				}
+				if (i == tot - 1 || tmp.maxVal > key) {
+					return ret;
+				}
+            }
+        }
+        return ret;
     }
 };
 

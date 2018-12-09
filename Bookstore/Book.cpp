@@ -11,11 +11,11 @@
 Book::Book() {
     
 }
-Book::Book(char const *i, char const *n, char const *a, char const *d, const double p, const int s) {
+Book::Book(char const *i, char const *n, char const *a, char const *k, const double p, const int s) {
     memcpy(ISBN, i, ISBNSize);
     memcpy(name, n, NameSize);
     memcpy(author, a, NameSize);
-    memcpy(description, d, NameSize);
+    memcpy(keyword, k, NameSize);
     price = p;
     stock = s;
 }
