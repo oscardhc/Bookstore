@@ -96,7 +96,7 @@ public:
             file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
             
-            if (tmp.tot > 0 && tmp.maxVal < key && i < tot - 1) {
+            if (tmp.maxVal < key && i < tot - 1) {
                 cur = tmp.nxt;
                 continue;
             } else {

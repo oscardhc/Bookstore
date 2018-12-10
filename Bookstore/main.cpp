@@ -10,9 +10,17 @@
 #include "BookStore.hpp"
 
 int main(int argc, const char * argv[]) {
-    
     BookStore a;
     a.run();
+//    Blocks idx;
+//    idx.init("./hhh.bi");
+//    for (int i = 0; i < 10000; i++) {
+//        idx.insertVal(1, i);
+//        idx.insertVal(2, i);
+//        idx.deleteVal(rand()%2 + 1, i);
+//    }
+//    freopen("tmp.out","w",stdout);
+//    idx.print();
     
     return 0;
 }
