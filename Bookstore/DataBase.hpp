@@ -75,7 +75,9 @@ public:
         T tmp = T();
         file.seekg(BaseSize + DataSize * index, std::ios::beg);
         file.write((char*)&tmp, DataSize);
-        stack[++stot] = index;
+        if (stot < StackSize - 1) {
+            stack[++stot] = index;
+        }
     }
     
     int addElement(T *t) {
