@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <fstream>
 
-const int StackSize = 100;
+const int StackSize = 0;
 
 template <class T, int DataSize>
 class DataBase {
