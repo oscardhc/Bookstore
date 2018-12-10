@@ -10,13 +10,8 @@
 #include "BookStore.hpp"
 
 int main(int argc, const char * argv[]) {
-//    BookStore a;
-//    a.run();
-    Blocks idx;
-    idx.init("./hhh.bi");
-    for (int i = 0; i < 10000; i++) {
-        idx.insertVal(1, i);
-    }
+    BookStore a;
+    a.run();
     
     return 0;
 }
