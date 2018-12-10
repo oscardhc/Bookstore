@@ -55,6 +55,7 @@ public:
         file.seekg(0, std::ios::beg);
         file.write((char*)&tot, sizeof(int));
         file.write((char*)&stot, sizeof(int));
+        file.write((char*)stack, StackSize * sizeof(int));
         file.close();
     }
     

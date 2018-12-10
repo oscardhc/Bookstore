@@ -236,7 +236,8 @@ public:
                 }
             }
         } else if (name != "\"") {
-            v = iIndex.qryforVal(strToNum(name));
+            v = nIndex.qryforVal(strToNum(name));
+            
             for (int i : v) {
                 bData.getElement(&hhh, i);
                 if (hhh.name == name) {
@@ -244,7 +245,7 @@ public:
                 }
             }
         } else if (author != "\"") {
-            v = iIndex.qryforVal(strToNum(author));
+            v = aIndex.qryforVal(strToNum(author));
             for (int i : v) {
                 bData.getElement(&hhh, i);
                 if (hhh.author == author) {
@@ -252,11 +253,18 @@ public:
                 }
             }
         } else if (keyword != "\"") {
-            v = iIndex.qryforVal(strToNum(keyword));
+            v = kIndex.qryforVal(strToNum(keyword));
             for (int i : v) {
                 bData.getElement(&hhh, i);
-                if (hhh.keyword == keyword) {
+                if (std::string(hhh.keyword).find(keyword) != std::string::npos) {
                     bookToShow.push_back(hhh);
+                }
+            }
+        } else {
+            for (int i = 0; i < bData.tot; i++) {
+                Book tmp = bData.getElement(i);
+                if (std::string(tmp.ISBN) != "\"") {
+                    bookToShow.push_back(tmp);
                 }
             }
         }
@@ -300,6 +308,7 @@ public:
     void load(std::string f);
     void work(std::fstream *input);
     void exec(std::string cmd) {
+        std::cout << cmd << std::endl;
         std::stringstream is(cmd);
         std::string key;
         is >> key;
@@ -327,7 +336,6 @@ public:
             select(v[0]);
         } else if (key == "modify") {
             std::string s = is.str();
-            std::cout << s << std::endl;
             size_t pos;
             if ((pos = s.find("-ISBN")) != std::string::npos) {
                 std::string ss = "";
@@ -369,11 +377,37 @@ public:
             is >> q >> p;
             import(q, p);
         } else if (key == "show") {
-            if (v[1] == "finance") {
+            if (v.size() > 1 && v[1] == "finance") {
                 if (v.size() == 3) {
                     showfinance(parseStr(v[2]));
                 } else {
                     showfinance();
+                }
+            } else {
+                std::string s = is.str();
+                size_t pos;
+                if ((pos = s.find("-ISBN")) != std::string::npos) {
+                    std::string ss = "";
+                    for (size_t j = pos + 6; j < s.length(); j++) {
+                        if (s[j] >= '0' && s[j] <= '9') {
+                            ss.push_back(s[j]);
+                        } else break;
+                    }
+                    show(ss, "\"", "\"", "\"");
+                } else if ((pos = s.find("-name")) != std::string::npos) {
+                    auto pr = nextQuote(pos, &s);
+                    auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                    show("\"", ss, "\"", "\"");
+                } else if ((pos = s.find("-author")) != std::string::npos) {
+                    auto pr = nextQuote(pos, &s);
+                    auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                    show("\"", "\"", ss, "\"");
+                } else if ((pos = s.find("-keyword")) != std::string::npos) {
+                    auto pr = nextQuote(pos, &s);
+                    auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                    show("\"", "\"", "\"", ss);
+                } else {
+                    show("\"", "\"", "\"", "\"");
                 }
             }
         } else if (key == "buy") {

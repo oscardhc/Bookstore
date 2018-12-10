@@ -90,7 +90,7 @@ public:
         tot++;
     }
     void insertVal(int key, int id) {
-        printf("ins... %d %d\n", key, id);
+//        printf("ins... %d %d\n", key, id);
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++) {
@@ -113,21 +113,6 @@ public:
                     memcpy(midary, tmp.key, sqrSize * sizeof(int));
                     std::nth_element(midary, midary + sqrSize / 2, midary + sqrSize);
                     midVal = midary[sqrSize / 2];
-//                    for (int l = tmp.minVal, r = tmp.maxVal; l <= r; ) {
-//                        int m = (1ll * l + r) / 2, cnt = 0;
-//
-//                        for (int j = 0; j < sqrSize; j++) {
-//                            if (tmp.key[j] <= m) {
-//                                cnt++;
-//                            }
-//                        }
-//                        if (cnt <= sqrSize / 2) {
-//                            l = m + 1;
-//                            midVal = m;
-//                        } else {
-//                            r = m - 1;
-//                        }
-//                    }
                     if (tmp.minVal == tmp.maxVal - 1) {
                         midVal = tmp.minVal;
                     }
@@ -166,19 +151,21 @@ public:
         }
     }
     std::vector<int> qryforVal(int key) {
+//        printf("now querying for %d...\n", key);
+//        print();
         Block tmp;
 		std::vector<int> ret;
         int cur = 0;
         for (int i = 0; i < tot; i++, cur = tmp.nxt) {
             file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
-            file.read((char*)&tmp, 3 * sizeof(int));
-            
+            file.read((char*)&tmp, 4 * sizeof(int));
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
-				file.seekg(-3 * sizeof(int), std::ios::cur);
+				file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
 				file.read((char*)&tmp, BlockSize);
+                
 				for (int j = 0; j < tmp.tot; j++) {
 					if (tmp.key[j] == key) {
-                        printf("qry... %d %d %d %d\n", cur, j, tmp.key[j], tmp.id[j]);
+//                        printf("qry... %d %d %d %d\n", cur, j, tmp.key[j], tmp.id[j]);
 						ret.push_back(tmp.id[j]);
 					}
 				}
