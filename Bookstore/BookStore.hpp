@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "Person.hpp"
 #include "Book.hpp"
 #include "DataBase.hpp"
@@ -48,41 +49,81 @@ public:
         }
         return (int)ret;
     }
-    
-    void work(std::istream input) {
-        char str[105];
-        while (input.getline(str, 100)) {
-            
-        }
+    int parseStr(std::string str) {
+        std::stringstream is(str);
+        int n;
+        is >> n;
+        return n;
     }
-    void load() {
-        
-    }
+
     void select(std::string isbn) {
         int num = strToNum(isbn);
         auto v = iIndex.qryforVal(num);
         if (v.empty()) {
             Book bk(isbn.c_str(), "", "", "", 0, 0);
-            bData.addElement(&bk);
+            curBookIndex = bData.addElement(&bk);
         } else {
             curBookIndex = v[0];
-            curBook = bData.getElement(curBookIndex);
         }
+        curBook = bData.getElement(curBookIndex);
     }
     void su(std::string username, std::string password) {
-        
+        Person tmp;
+        for (int i = 0; i < pData.tot; i++) {
+            pData.getElement(&tmp, i);
+            if (std::string(tmp.userid) == username) {
+                if (std::string(tmp.passwd) == password) {
+                    curUser = tmp;
+                    curUserIndex = i;
+                }
+                return;
+            }
+        }
     }
-    void useradd() {
-        
+    void logout() {
+        curUserIndex = -1;
+        curUser = Person();
     }
-    void regi() {
-        
+    void useradd(std::string userid, std::string passwd, std::string level, std::string name) {
+        Person tmp(userid.c_str(), passwd.c_str(), name.c_str(), parseStr(level));
+        pData.addElement(&tmp);
     }
-    void del() {
-        
+    void regi(std::string userid, std::string passwd, std::string name) {
+        useradd(userid, passwd, "1", name);
     }
-    void pswd() {
-        
+    void del(std::string userid) {
+        Person tmp;
+        for (int i = 0; i < pData.tot; i++) {
+            pData.getElement(&tmp, i);
+            if (std::string(tmp.userid) == userid) {
+                pData.delElement(i);
+            }
+        }
+    }
+    void changePassword(std::string userid, std::string passwd, std::string oldpasswd = " ") {
+        Person tmp;
+        for (int i = 0; i < pData.tot; i++) {
+            pData.getElement(&tmp, i);
+            if (std::string(tmp.userid) == userid) {
+                if (oldpasswd == " " || tmp.passwd == oldpasswd) {
+                    memcpy(tmp.passwd, passwd.c_str(), StrSIZE);
+                    pData.replaceElement(i, &tmp);
+                    if (i == curUserIndex) {
+                        curUser = tmp;
+                    }
+                } else {
+                    
+                }
+                return;
+            }
+        }
+    }
+    void pswd(std::vector<std::string> v) {
+        if (curUser.level == 7) {
+            
+        } else {
+            
+        }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
         if (isbn != "\"") memcpy(curBook.ISBN, isbn.c_str(), ISBNSize);
@@ -94,16 +135,18 @@ public:
     }
     void import(int quantity, double totalPrice) {
         curBook.stock += quantity;
+        bData.replaceElement(curBookIndex, &curBook);
         Trade tmp(0, totalPrice);
         tData.addElement(&tmp);
     }
     void show(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"") {
         std::vector<int> v;
         std::vector<Book> bookToShow;
+        Book hhh;
         if (isbn != "\"") {
             v = iIndex.qryforVal(strToNum(isbn));
             for (int i : v) {
-                Book hhh = bData.getElement(i);
+                bData.getElement(&hhh, i);
                 if (hhh.ISBN == isbn) {
                     bookToShow.push_back(hhh);
                 }
@@ -111,7 +154,7 @@ public:
         } else if (name != "\"") {
             v = iIndex.qryforVal(strToNum(name));
             for (int i : v) {
-                Book hhh = bData.getElement(i);
+                bData.getElement(&hhh, i);
                 if (hhh.name == name) {
                     bookToShow.push_back(hhh);
                 }
@@ -119,7 +162,7 @@ public:
         } else if (author != "\"") {
             v = iIndex.qryforVal(strToNum(author));
             for (int i : v) {
-                Book hhh = bData.getElement(i);
+                bData.getElement(&hhh, i);
                 if (hhh.author == author) {
                     bookToShow.push_back(hhh);
                 }
@@ -127,19 +170,152 @@ public:
         } else if (keyword != "\"") {
             v = iIndex.qryforVal(strToNum(keyword));
             for (int i : v) {
-                Book hhh = bData.getElement(i);
+                bData.getElement(&hhh, i);
                 if (hhh.keyword == keyword) {
                     bookToShow.push_back(hhh);
                 }
             }
         }
+        std::sort(bookToShow.begin(), bookToShow.end());
+        for (auto i : bookToShow) {
+            std::cout << i.ISBN << "\t" << i.name << "\t" << i.author << "\t" << i.keyword << "\t" << i.price << "\t" << i.stock << "本" << std::endl;
+        }
     }
-    void showfinance() {
-        
+    void showfinance(int n = -1) {
+        double in = 0.0, out = 0.0;
+        Trade tmp;
+        if (n == -1) {
+            for (int i = 0; i < tData.tot; i++) {
+                tData.getElement(&tmp, i);
+                in += tmp.in;
+                out += tmp.out;
+            }
+        } else {
+            for (int i = tData.tot - n; i < tData.tot; i++) {
+                tData.getElement(&tmp, i);
+                in += tmp.in;
+                out += tmp.out;
+            }
+        }
+        std::cout << "+ " << in << " - " << out << std::endl;
     }
-    void buy() {
-        
+    void buy(std::string isbn, int quantity) {
+        std::vector<int> v = iIndex.qryforVal(strToNum(isbn));
+        for (int i : v) {
+            Book hhh = bData.getElement(i);
+            if (hhh.ISBN == isbn) {
+                hhh.stock -= quantity;
+                bData.replaceElement(i, &hhh);
+                Trade tmp(hhh.price * quantity, 0);
+                tData.addElement(&tmp);
+                return;
+            }
+        }
     }
+    
+    void load(std::string f);
+    void work(std::fstream *input);
+    
+    std::vector<std::string> split(std::stringstream *is) {
+        std::string tmp;
+        std::vector<std::string> ret;
+        while (*is >> tmp) {
+            ret.push_back(tmp);
+        }
+        return ret;
+    }
+    std::pair<int, int> nextQuote(size_t pos, std::string *s) {
+        int bg = -1, ed = -1;
+        for (size_t j = pos + 5; j < s->length(); j++) {
+            if ((*s)[j] == '"') {
+                if (bg == -1) {
+                    bg = (int)j;
+                } else if (ed == -1) {
+                    ed = (int)j;
+                } else {
+                    break;
+                }
+            }
+        }
+        return {bg, ed};
+    }
+    void exec(std::string cmd) {
+        std::stringstream is(cmd);
+        std::string key;
+        is >> key;
+        std::vector<std::string> v;
+        if (key != "modify"){
+            v = split(&is);
+        }
+        if (key == "load") {
+            load(v[1]);
+        } else if (key == "exit") {
+            
+        } else if (key == "su") {
+            su(v[1], v[2]);
+        } else if (key == "logout") {
+            logout();
+        } else if (key == "useradd") {
+            useradd(v[1], v[2], v[3], v[4]);
+        } else if (key == "register") {
+            regi(v[1], v[2], v[3]);
+        } else if (key == "delete") {
+            del(v[1]);
+        } else if (key == "passwd") {
+            pswd(v);
+        } else if (key == "select") {
+            select(v[1]);
+        } else if (key == "modify") {
+            std::string s = is.str();
+            std::cout << s << std::endl;
+            size_t pos;
+            if ((pos = s.find("-ISBN")) != std::string::npos) {
+                auto pr = nextQuote(pos, &s);
+                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+            }
+            if ((pos = s.find("-name")) != std::string::npos) {
+                auto pr = nextQuote(pos, &s);
+                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+            }
+            if ((pos = s.find("-author")) != std::string::npos) {
+                auto pr = nextQuote(pos, &s);
+                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+            }
+            if ((pos = s.find("-keyword")) != std::string::npos) {
+                auto pr = nextQuote(pos, &s);
+                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+            }
+            if ((pos = s.find("-price")) != std::string::npos) {
+                auto pr = nextQuote(pos, &s);
+                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+            }
+//            for (int i = 0, l = (int)strlen(s.c_str()); i < l; i++) {
+//                if (s.c_str()[i] == '-') {
+//                    if (s.c_str()[i+1] == 'I' && s.c_str()[i+2] == 'S' && s.c_str()[i+3] == 'B' && s.c_str()[i+4] == 'N') {
+//
+//                    } else if (s.c_str()[i+1] == 'n' && s.c_str()[i+2] == 'a' && s.c_str()[i+3] == 'm' && s.c_str()[i+4] == 'e') {
+//
+//                    } else if (s.c_str()[i+1] == 'a' && s.c_str()[i+2] == 'u' && s.c_str()[i+3] == 't' && s.c_str()[i+4] == 'h' && s.c_str()[i+5] == 'o' && s.c_str()[i+6] == 'r') {
+//
+//                    } else if (s.c_str()[i+1] == 'k' && s.c_str()[i+2] == 'e' && s.c_str()[i+3] == 'y' && s.c_str()[i+4] == 'w' && s.c_str()[i+5] == 'o' && s.c_str()[i+6] == 'r' && s.c_str()[i+7] == 'd') {
+//
+//                    }
+//                }
+//            }
+        } else if (key == "show") {
+            if (v[1] == "finance") {
+                if (v.size() == 4) {
+                    showfinance(parseStr(v[3]));
+                } else {
+                    showfinance();
+                }
+            }
+        } else if (key == "buy") {
+            buy(v[1], parseStr(v[2]));
+        }
+    }
+    
+
 };
 
 #endif /* BookStore_hpp */

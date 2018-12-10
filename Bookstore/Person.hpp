@@ -20,7 +20,7 @@ const size_t StrSIZE = 35;
 const size_t UserSIZE = StrSIZE * 3 + sizeof(int);
 
 class Person {
-private:
+public:
     char userid[StrSIZE], passwd[StrSIZE], name[StrSIZE];
     int level;
     

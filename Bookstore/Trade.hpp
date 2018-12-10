@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 class Trade {
+public:
     double in, out;
     
 public:

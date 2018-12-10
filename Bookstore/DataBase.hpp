@@ -17,7 +17,11 @@ const int StackSize = 100;
 template <class T, int DataSize>
 class DataBase {
     int BaseSize = (StackSize + 2) * sizeof(int);
+    
+public:
     int tot, stot;
+    
+private:
     std::fstream file;
     std::string filename;
     int stack[StackSize];
@@ -32,10 +36,7 @@ public:
         file.close();
         file.clear();
         file = std::fstream(filename, std::ios::in|std::ios::out|std::ios::binary);
-        
-        printf("..... %d \n", file.good());
         file.seekg(0, std::ios::end);
-        printf("..... %d \n", file.good());
         if (file.tellg() == 0) {
             file.seekg(0, std::ios::beg);
             tot = stot = 0;
@@ -54,7 +55,6 @@ public:
         file.seekg(0, std::ios::beg);
         file.write((char*)&tot, sizeof(int));
         file.write((char*)&stot, sizeof(int));
-        printf("WRITE!!!\n");
         file.close();
     }
     
@@ -68,6 +68,13 @@ public:
     void getElement(T *t, int index, int sizeToRead = DataSize) {
         file.seekg(BaseSize + DataSize * index, std::ios::beg);
         file.read((char*)t, sizeToRead);
+    }
+    
+    void delElement(int index) {
+        T tmp = T();
+        file.seekg(BaseSize + DataSize * index, std::ios::beg);
+        file.write((char*)&tmp, DataSize);
+        stack[++stot] = index;
     }
     
     int addElement(T *t) {

@@ -7,3 +7,14 @@
 //
 
 #include "BookStore.hpp"
+
+void BookStore::load(std::string f) {
+    std::fstream cmdText(f, std::ios::in);
+    work(&cmdText);
+}
+void BookStore::work(std::fstream *input) {
+    char str[105];
+    while (input->getline(str, 100)) {
+        
+    }
+}

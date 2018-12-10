@@ -26,6 +26,9 @@ public:
     int stock;
     Book();
     Book(char const *i, char const *n, char const *a, char const *k, const double p, const int s);
+    bool operator < (const Book &a) const {
+        return std::string(ISBN) < std::string(a.ISBN);
+    }
 };
 
 #endif /* Book_hpp */

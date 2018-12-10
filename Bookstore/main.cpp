@@ -7,11 +7,14 @@
 //
 
 #include <iostream>
-#include "Bookstore.hpp"
+#include "BookStore.hpp"
 
 int main(int argc, const char * argv[]) {
     
-//    BookStore a;
+    BookStore a;
+    std::string cmd = "modify -keyword=\"嘻嘻|123|4 5|哈哈哈\"";
+    a.exec(cmd);
+    
     
 //    auto a = Person("abcdef" , "123456" , "哈哈哈哈哈", 233);
 //    auto b = Person("hhhhhhh" , "xyzxyz" , "嘻嘻嘻嘻", 100);
