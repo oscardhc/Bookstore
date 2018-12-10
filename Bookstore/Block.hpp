@@ -119,7 +119,7 @@ public:
                     tmp.reset();
                     blk.reset();
                     for (int j = 0; j < sqrSize; j++) {
-                        if (tmp.key[j] <= midVal) {
+                        if ((tmp.key[j] <= midVal) || (tmp.minVal == tmp.maxVal && j < sqrSize / 2)) {
                             tmp.key[tmp.tot] = tmp.key[j];
                             tmp.id[tmp.tot] = tmp.id[j];
                             tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
@@ -185,7 +185,7 @@ public:
                     if (tmp.key[j] == key && tmp.id[j] == id) {
                         if (tmp.tot == 1) {
                             tmp.tot--;
-                        } else {
+                        } else if (tmp.tot > 1) {
                             tmp.tot--;
                             std::swap(tmp.key[j], tmp.key[tmp.tot]);
                             std::swap(tmp.id[j], tmp.id[tmp.tot]);
