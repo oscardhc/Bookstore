@@ -187,10 +187,10 @@ public:
             std::cout << "Invalid" << std::endl;
             return;
         }
-        if (curUser.level == 7) {
-            
+        if (v[0] == "root") {
+            changePassword(v[0], v[1]);
         } else {
-            
+            changePassword(v[0], v[2], v[1]);
         }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
@@ -376,7 +376,7 @@ public:
     void work(std::fstream *input);
     void exec(std::string cmd) {
         
-//        std::cout << curUser.name << curUser.level << std::endl;
+//        std::cout << cmd << std::endl;
         std::stringstream is(cmd);
         std::string key;
         is >> key;
