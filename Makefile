@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++14 -g
+CXXFLAGS = -Wall -std=c++14
 
 code :
 	$(CXX) -o code ./Bookstore/*.cpp $(CXXFLAGS)

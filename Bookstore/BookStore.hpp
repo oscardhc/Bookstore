@@ -413,11 +413,19 @@ public:
             v = split(&is);
         }
         if (key == "load") {
-            load(v[0]);
+            if (v.size() == 1) load(v[0]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else if (key == "exit") {
             throw 1;
         } else if (key == "su") {
-            su(v);
+            if (v.size() > 0) su(v);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else if (key == "logout") {
             logout();
         } else if (key == "useradd") {
@@ -433,11 +441,19 @@ public:
                 return;
             }
         } else if (key == "delete") {
-            del(v[0]);
+            if (v.size() == 1) del(v[0]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else if (key == "passwd") {
             pswd(v);
         } else if (key == "select") {
-            select(v[0]);
+            if (v.size()) select(v[0]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else if (key == "modify") {
             std::string s = is.str();
             size_t pos;
@@ -473,6 +489,10 @@ public:
                 modify("\"", "\"", "\"", "\"", p);
             }
         } else if (key == "import") {
+            if (v.size() != 2) {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
             std::stringstream is(v[0] + " " + v[1]);
             int q = -1;
             double p = -1.0;
@@ -513,6 +533,10 @@ public:
                 }
             }
         } else if (key == "buy") {
+            if (v.size() != 2) {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
             buy(v[0], parseStr(v[1]));
         } else {
             std::cout << "Invalid" << std::endl;
