@@ -14,42 +14,5 @@ int main(int argc, const char * argv[]) {
     BookStore a;
     a.run();
     
-    
-//    auto a = Person("abcdef" , "123456" , "哈哈哈哈哈", 233);
-//    auto b = Person("hhhhhhh" , "xyzxyz" , "嘻嘻嘻嘻", 100);
-    
-//    DataBase<Person, UserSIZE> data("./dat.bi");
-//    data.addElement(&a);
-//    data.addElement(&b);
-//    data.addElement(&a);
-//    data.addElement(&b);
-//    
-//    data.getElement(0).print();
-    
-//    Blocks blk;
-//    blk.init("./blk.bi");
-//    freopen("hhh.out", "w", stdout);
-//    for (int i = 1; i < 10000; i++) {
-//        int cur = rand() % 1000;
-//        blk.insertVal(cur, i);
-//    }
-//    blk.print();
-
-//    auto v = blk.qryforVal(3);
-//
-//    for (int i = 0; i < v.size(); i++) {
-//        printf(" > %d %d\n", i, v[i]);
-//    }
-//
-//    blk.deleteVal(3, 393);
-//
-//    blk.print();
-//
-//    v = blk.qryforVal(3);
-//
-//    for (int i = 0; i < v.size(); i++) {
-//        printf(" > %d %d\n", i, v[i]);
-//    }
-    
     return 0;
 }
