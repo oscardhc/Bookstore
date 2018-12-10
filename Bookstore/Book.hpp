@@ -24,8 +24,7 @@ public:
     char ISBN[ISBNSize], name[NameSize], author[NameSize], keyword[NameSize];
     double price;
     int stock;
-    Book();
-    Book(char const *i, char const *n, char const *a, char const *k, const double p, const int s);
+    Book(char const *i = "\"", char const *n = "\"", char const *a = "\"", char const *k = "\"", const double p = -1.0, const int s = 0);
     bool operator < (const Book &a) const {
         return std::string(ISBN) < std::string(a.ISBN);
     }

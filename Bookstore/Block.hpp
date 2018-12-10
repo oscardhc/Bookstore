@@ -90,7 +90,6 @@ public:
         tot++;
     }
     void insertVal(int key, int id) {
-//        printf("...........%d %d\n", key, id);
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++) {
@@ -101,10 +100,8 @@ public:
                 cur = tmp.nxt;
                 continue;
             } else {
-                
                 file.seekp(-3 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);
-                
                 tmp.tot++;
                 tmp.key[tmp.tot - 1] = key;
                 tmp.id[tmp.tot - 1] = id;
@@ -190,6 +187,37 @@ public:
             }
         }
         return ret;
+    }
+    void deleteVal(int key, int id) {
+        Block tmp;
+        int cur = 0;
+        for (int i = 0; i < tot; i++, cur = tmp.nxt) {
+            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.read((char*)&tmp, 3 * sizeof(int));
+            
+            if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
+                file.seekg(-3 * sizeof(int), std::ios::cur);
+                file.read((char*)&tmp, BlockSize);
+                for (int j = 0; j < tmp.tot; j++) {
+                    if (tmp.key[j] == key && tmp.id[j] == id) {
+                        if (tmp.tot == 1) {
+                            tmp.tot--;
+                        } else {
+                            tmp.tot--;
+                            std::swap(tmp.key[j], tmp.key[tmp.tot]);
+                            std::swap(tmp.id[j], tmp.id[tmp.tot]);
+                        }
+                        file.seekg(-BlockSize, std::ios::cur);
+                        file.write((char*)&tmp, BlockSize);
+                        return;
+                    }
+                }
+                if (i == tot - 1 || tmp.maxVal > key) {
+                    return;
+                }
+            }
+        }
+        return;
     }
 };
 

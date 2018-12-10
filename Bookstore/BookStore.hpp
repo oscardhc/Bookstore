@@ -126,10 +126,38 @@ public:
         }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
-        if (isbn != "\"") memcpy(curBook.ISBN, isbn.c_str(), ISBNSize);
-        if (name != "\"") memcpy(curBook.name, name.c_str(), NameSize);
-        if (author != "\"") memcpy(curBook.author, author.c_str(), NameSize);
-        if (keyword != "\"") memcpy(curBook.keyword, keyword.c_str(), NameSize);
+        if (isbn != "\"") {
+            auto ss = std::string(curBook.ISBN);
+            if (ss != "\"") {
+                iIndex.deleteVal(strToNum(ss), curBookIndex);
+            }
+            iIndex.insertVal(strToNum(isbn), curBookIndex);
+            memcpy(curBook.ISBN, isbn.c_str(), ISBNSize);
+        }
+        if (name != "\"") {
+            auto ss = std::string(curBook.name);
+            if (ss != "\"") {
+                nIndex.deleteVal(strToNum(ss), curBookIndex);
+            }
+            nIndex.insertVal(strToNum(name), curBookIndex);
+            memcpy(curBook.name, name.c_str(), NameSize);
+        
+        }
+        if (author != "\"") {
+            auto ss = std::string(curBook.author);
+            if (ss != "\"") {
+                aIndex.deleteVal(strToNum(ss), curBookIndex);
+            }
+            aIndex.insertVal(strToNum(author), curBookIndex);
+            memcpy(curBook.author, author.c_str(), NameSize);
+        }
+        if (keyword != "\"") {
+            auto ss = std::string(curBook.keyword);
+            if (ss != "\"") {
+                
+            }
+            memcpy(curBook.keyword, keyword.c_str(), NameSize);
+        }
         if (price != -1) curBook.price = price;
         bData.replaceElement(curBookIndex, &curBook);
     }
@@ -272,36 +300,31 @@ public:
             if ((pos = s.find("-ISBN")) != std::string::npos) {
                 auto pr = nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                modify(ss, "\"", "\"", "\"", -1.0);
             }
             if ((pos = s.find("-name")) != std::string::npos) {
                 auto pr = nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                modify("\"", ss, "\"", "\"", -1.0);
             }
             if ((pos = s.find("-author")) != std::string::npos) {
                 auto pr = nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                modify("\"", "\"", ss, "\"", -1.0);
             }
             if ((pos = s.find("-keyword")) != std::string::npos) {
                 auto pr = nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                modify("\"", "\"", "\"", ss, -1.0);
             }
             if ((pos = s.find("-price")) != std::string::npos) {
                 auto pr = nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                std::stringstream is(ss);
+                double p = -1.0;
+                is >> p;
+                modify("\"", "\"", "\"", "\"", p);
             }
-//            for (int i = 0, l = (int)strlen(s.c_str()); i < l; i++) {
-//                if (s.c_str()[i] == '-') {
-//                    if (s.c_str()[i+1] == 'I' && s.c_str()[i+2] == 'S' && s.c_str()[i+3] == 'B' && s.c_str()[i+4] == 'N') {
-//
-//                    } else if (s.c_str()[i+1] == 'n' && s.c_str()[i+2] == 'a' && s.c_str()[i+3] == 'm' && s.c_str()[i+4] == 'e') {
-//
-//                    } else if (s.c_str()[i+1] == 'a' && s.c_str()[i+2] == 'u' && s.c_str()[i+3] == 't' && s.c_str()[i+4] == 'h' && s.c_str()[i+5] == 'o' && s.c_str()[i+6] == 'r') {
-//
-//                    } else if (s.c_str()[i+1] == 'k' && s.c_str()[i+2] == 'e' && s.c_str()[i+3] == 'y' && s.c_str()[i+4] == 'w' && s.c_str()[i+5] == 'o' && s.c_str()[i+6] == 'r' && s.c_str()[i+7] == 'd') {
-//
-//                    }
-//                }
-//            }
         } else if (key == "show") {
             if (v[1] == "finance") {
                 if (v.size() == 4) {
