@@ -276,9 +276,9 @@ public:
         if (price != -1) {
             
             if (curBook.price != -1) {
-                pIndex.deleteVal((int)(curBook.price * 10000), curBookIndex);
+                pIndex.deleteVal((int)(curBook.price * 10000000), curBookIndex);
             }
-            pIndex.insertVal((int)(price * 10000), curBookIndex);
+            pIndex.insertVal((int)(price * 10000000), curBookIndex);
             
             curBook.price = price;
         }

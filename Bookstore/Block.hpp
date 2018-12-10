@@ -16,7 +16,7 @@
 #include <vector>
 #include <cstring>
 
-const int sqrSize = 80;
+const int sqrSize = 200;
 
 class Block {
     
@@ -142,10 +142,9 @@ public:
                     
                     addBlock(&blk);
                 } else {
-                    file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+                    file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
                     file.write((char*)&tmp, BlockSize);
                 }
-                
                 break;
             }
         }
@@ -162,7 +161,7 @@ public:
 				file.read((char*)&tmp, BlockSize);
                 
 				for (int j = 0; j < tmp.tot; j++) {
-					if (tmp.key[j] == key) {
+					if (tmp.key[j] == key && tmp.id[j] != -1) {
 						ret.push_back(tmp.id[j]);
 					}
 				}
@@ -185,7 +184,7 @@ public:
                 for (int j = 0; j < tmp.tot; j++) {
                     if (tmp.key[j] == key && tmp.id[j] == id) {
                         if (tmp.tot == 1) {
-                            tmp.tot--;
+                            tmp.id[j] = -1;
                         } else if (tmp.tot > 1) {
                             tmp.tot--;
                             std::swap(tmp.key[j], tmp.key[tmp.tot]);
