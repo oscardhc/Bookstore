@@ -14,6 +14,7 @@
 		559CF9C021BAADA900A40366 /* BookStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559CF9BE21BAADA900A40366 /* BookStore.cpp */; };
 		559DC33D21B8C2EC00B30947 /* DataBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 559DC33B21B8C2EC00B30947 /* DataBase.cpp */; };
 		55D5702E21BD5161006709E3 /* Trade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55D5702C21BD5160006709E3 /* Trade.cpp */; };
+		55D5703021BE65A3006709E3 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 55D5702F21BE65A3006709E3 /* Makefile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,7 @@
 		559DC33C21B8C2EC00B30947 /* DataBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBase.hpp; sourceTree = "<group>"; };
 		55D5702C21BD5160006709E3 /* Trade.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Trade.cpp; sourceTree = "<group>"; };
 		55D5702D21BD5161006709E3 /* Trade.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Trade.hpp; sourceTree = "<group>"; };
+		55D5702F21BE65A3006709E3 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 		553D1D9221AE359F00BCC85E = {
 			isa = PBXGroup;
 			children = (
+				55D5702F21BE65A3006709E3 /* Makefile */,
 				553D1D9D21AE359F00BCC85E /* Bookstore */,
 				553D1D9C21AE359F00BCC85E /* Products */,
 			);
@@ -156,6 +159,7 @@
 				559CF9BD21BA46AC00A40366 /* Block.cpp in Sources */,
 				559CF9C021BAADA900A40366 /* BookStore.cpp in Sources */,
 				55D5702E21BD5161006709E3 /* Trade.cpp in Sources */,
+				55D5703021BE65A3006709E3 /* Makefile in Sources */,
 				553D1D9F21AE359F00BCC85E /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
