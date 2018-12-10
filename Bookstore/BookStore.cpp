@@ -13,8 +13,23 @@ void BookStore::load(std::string f) {
     work(&cmdText);
 }
 void BookStore::work(std::fstream *input) {
-    char str[105];
-    while (input->getline(str, 100)) {
-        
+    char str[205];
+    if (input->good()) {
+        while (input->getline(str, 200)) {
+            try {
+                exec(std::string(str));
+            } catch(int) {
+                return;
+            }
+        }
+    } else {
+        while (std::cin.getline(str, 200)) {
+            try {
+                exec(std::string(str));
+            } catch(int) {
+                return;
+            }
+        }
     }
+    
 }

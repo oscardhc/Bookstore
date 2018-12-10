@@ -39,6 +39,9 @@ public:
         bData.init("./book_data.bi");
         pData.init("./person_data.bi");
         tData.init("./trade_data.bi");
+        if (pData.tot == 0) {
+            useradd("root", "sjtu", "7", "yyu");
+        }
     }
     
     int strToNum(std::string str) {
@@ -55,6 +58,41 @@ public:
         is >> n;
         return n;
     }
+    std::vector<std::string> split(std::stringstream *is) {
+        std::string tmp;
+        std::vector<std::string> ret;
+        while (*is >> tmp) {
+            ret.push_back(tmp);
+        }
+        return ret;
+    }
+    std::pair<int, int> nextQuote(size_t pos, std::string *s) {
+        int bg = -1, ed = -1;
+        for (size_t j = pos + 5; j < s->length(); j++) {
+            if ((*s)[j] == '"') {
+                if (bg == -1) {
+                    bg = (int)j;
+                } else if (ed == -1) {
+                    ed = (int)j;
+                } else {
+                    break;
+                }
+            }
+        }
+        return {bg, ed};
+    }
+    std::vector<std::string> splitKeyword(std::string *s) {
+        std::vector<std::string> ret;
+        size_t ls = 0;
+        for (size_t j = 0; j < s->length(); j++) {
+            if ((*s)[j] == '|') {
+                ret.push_back(s->substr(ls, j - ls));
+                ls = j + 1;
+            }
+        }
+        ret.push_back(s->substr(ls, s->length() - ls));
+        return ret;
+    }
 
     void select(std::string isbn) {
         int num = strToNum(isbn);
@@ -62,6 +100,7 @@ public:
         if (v.empty()) {
             Book bk(isbn.c_str(), "", "", "", 0, 0);
             curBookIndex = bData.addElement(&bk);
+            iIndex.insertVal(strToNum(isbn), curBookIndex);
         } else {
             curBookIndex = v[0];
         }
@@ -126,6 +165,7 @@ public:
         }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
+        
         if (isbn != "\"") {
             auto ss = std::string(curBook.ISBN);
             if (ss != "\"") {
@@ -154,11 +194,26 @@ public:
         if (keyword != "\"") {
             auto ss = std::string(curBook.keyword);
             if (ss != "\"") {
-                
+                auto v1 = splitKeyword(&ss);
+                for (auto i : v1) {
+                    kIndex.deleteVal(strToNum(i), curBookIndex);
+                }
+            }
+            auto v2 = splitKeyword(&keyword);
+            for (auto i : v2) {
+                kIndex.insertVal(strToNum(i), curBookIndex);
             }
             memcpy(curBook.keyword, keyword.c_str(), NameSize);
         }
-        if (price != -1) curBook.price = price;
+        if (price != -1) {
+            
+            if (curBook.price != -1) {
+                pIndex.deleteVal((int)(curBook.price * 10000), curBookIndex);
+            }
+            pIndex.insertVal((int)(price * 10000), curBookIndex);
+            
+            curBook.price = price;
+        }
         bData.replaceElement(curBookIndex, &curBook);
     }
     void import(int quantity, double totalPrice) {
@@ -170,6 +225,7 @@ public:
     void show(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"") {
         std::vector<int> v;
         std::vector<Book> bookToShow;
+        
         Book hhh;
         if (isbn != "\"") {
             v = iIndex.qryforVal(strToNum(isbn));
@@ -243,30 +299,6 @@ public:
     
     void load(std::string f);
     void work(std::fstream *input);
-    
-    std::vector<std::string> split(std::stringstream *is) {
-        std::string tmp;
-        std::vector<std::string> ret;
-        while (*is >> tmp) {
-            ret.push_back(tmp);
-        }
-        return ret;
-    }
-    std::pair<int, int> nextQuote(size_t pos, std::string *s) {
-        int bg = -1, ed = -1;
-        for (size_t j = pos + 5; j < s->length(); j++) {
-            if ((*s)[j] == '"') {
-                if (bg == -1) {
-                    bg = (int)j;
-                } else if (ed == -1) {
-                    ed = (int)j;
-                } else {
-                    break;
-                }
-            }
-        }
-        return {bg, ed};
-    }
     void exec(std::string cmd) {
         std::stringstream is(cmd);
         std::string key;
@@ -276,30 +308,34 @@ public:
             v = split(&is);
         }
         if (key == "load") {
-            load(v[1]);
+            load(v[0]);
         } else if (key == "exit") {
-            
+            throw 1;
         } else if (key == "su") {
-            su(v[1], v[2]);
+            su(v[0], v[1]);
         } else if (key == "logout") {
             logout();
         } else if (key == "useradd") {
-            useradd(v[1], v[2], v[3], v[4]);
+            useradd(v[0], v[1], v[2], v[3]);
         } else if (key == "register") {
-            regi(v[1], v[2], v[3]);
+            regi(v[0], v[1], v[2]);
         } else if (key == "delete") {
-            del(v[1]);
+            del(v[0]);
         } else if (key == "passwd") {
             pswd(v);
         } else if (key == "select") {
-            select(v[1]);
+            select(v[0]);
         } else if (key == "modify") {
             std::string s = is.str();
             std::cout << s << std::endl;
             size_t pos;
             if ((pos = s.find("-ISBN")) != std::string::npos) {
-                auto pr = nextQuote(pos, &s);
-                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                std::string ss = "";
+                for (size_t j = pos + 6; j < s.length(); j++) {
+                    if (s[j] >= '0' && s[j] <= '9') {
+                        ss.push_back(s[j]);
+                    } else break;
+                }
                 modify(ss, "\"", "\"", "\"", -1.0);
             }
             if ((pos = s.find("-name")) != std::string::npos) {
@@ -318,27 +354,39 @@ public:
                 modify("\"", "\"", "\"", ss, -1.0);
             }
             if ((pos = s.find("-price")) != std::string::npos) {
-                auto pr = nextQuote(pos, &s);
-                auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
+                auto ss = s.substr(pos + 7, 100);
+                std::cout << ss << std::endl;
                 std::stringstream is(ss);
                 double p = -1.0;
                 is >> p;
+                std::cout << p << std::endl;
                 modify("\"", "\"", "\"", "\"", p);
             }
+        } else if (key == "import") {
+            std::stringstream is(v[0] + " " + v[1]);
+            int q = -1;
+            double p = -1.0;
+            is >> q >> p;
+            import(q, p);
         } else if (key == "show") {
             if (v[1] == "finance") {
-                if (v.size() == 4) {
-                    showfinance(parseStr(v[3]));
+                if (v.size() == 3) {
+                    showfinance(parseStr(v[2]));
                 } else {
                     showfinance();
                 }
             }
         } else if (key == "buy") {
-            buy(v[1], parseStr(v[2]));
+            buy(v[0], parseStr(v[1]));
+        } else {
+            std::cout << "Invalid" << std::endl;
+            std::cout << key << std::endl;
         }
     }
-    
-
+    void run() {
+        std::fstream f("./command.txt", std::ios::in);
+        work(&f);
+    }
 };
 
 #endif /* BookStore_hpp */

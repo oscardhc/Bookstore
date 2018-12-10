@@ -8,9 +8,6 @@
 
 #include "Book.hpp"
 
-Book::Book() {
-    
-}
 Book::Book(char const *i, char const *n, char const *a, char const *k, const double p, const int s) {
     memcpy(ISBN, i, ISBNSize);
     memcpy(name, n, NameSize);

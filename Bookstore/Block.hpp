@@ -90,6 +90,7 @@ public:
         tot++;
     }
     void insertVal(int key, int id) {
+        printf("ins... %d %d\n", key, id);
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++) {
@@ -177,7 +178,7 @@ public:
 				file.read((char*)&tmp, BlockSize);
 				for (int j = 0; j < tmp.tot; j++) {
 					if (tmp.key[j] == key) {
-                        printf("%d %d %d %d\n", cur, j, tmp.key[j], tmp.id[j]);
+                        printf("qry... %d %d %d %d\n", cur, j, tmp.key[j], tmp.id[j]);
 						ret.push_back(tmp.id[j]);
 					}
 				}
