@@ -8,9 +8,6 @@
 
 #include "Person.hpp"
 
-Person::Person() {
-    
-}
 Person::Person(char const *u, char const *p, char const *n, const int l) {
     memcpy(userid, u, StrSIZE);
     memcpy(passwd, p, StrSIZE);

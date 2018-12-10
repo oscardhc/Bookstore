@@ -15,6 +15,8 @@ void BookStore::load(std::string f) {
 void BookStore::work(std::fstream *input) {
     char str[205];
     if (input->good()) {
+        curUser = pData.getElement(0);
+        curUserIndex = 0;
         while (input->getline(str, 200)) {
             try {
                 exec(std::string(str));
@@ -23,6 +25,8 @@ void BookStore::work(std::fstream *input) {
             }
         }
     } else {
+        curUser = Person();
+        curUserIndex = -1;
         while (std::cin.getline(str, 200)) {
             try {
                 exec(std::string(str));

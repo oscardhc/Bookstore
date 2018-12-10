@@ -10,6 +10,7 @@
 #define BookStore_hpp
 
 #include <stdio.h>
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -31,6 +32,8 @@ class BookStore {
     
 public:
     BookStore() {
+        std::cout << std::fixed << std::setprecision(2);
+        curBookIndex = -1;
         iIndex.init("./isbn_index.bi");
         nIndex.init("./name_index.bi");
         aIndex.init("./author_index.bi");
@@ -40,6 +43,7 @@ public:
         pData.init("./person_data.bi");
         tData.init("./trade_data.bi");
         if (pData.tot == 0) {
+            curUser.level = 233;
             useradd("root", "sjtu", "7", "yyu");
         }
     }
@@ -95,6 +99,10 @@ public:
     }
 
     void select(std::string isbn) {
+        if (curUser.level < 3) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         int num = strToNum(isbn);
         auto v = iIndex.qryforVal(num);
         if (v.empty()) {
@@ -120,17 +128,30 @@ public:
         }
     }
     void logout() {
+        if (curUser.level < 1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         curUserIndex = -1;
         curUser = Person();
     }
     void useradd(std::string userid, std::string passwd, std::string level, std::string name) {
+        if (curUser.level < 3 || curUser.level <= parseStr(level)) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         Person tmp(userid.c_str(), passwd.c_str(), name.c_str(), parseStr(level));
         pData.addElement(&tmp);
     }
     void regi(std::string userid, std::string passwd, std::string name) {
-        useradd(userid, passwd, "1", name);
+        Person tmp(userid.c_str(), passwd.c_str(), name.c_str(), 1);
+        pData.addElement(&tmp);
     }
     void del(std::string userid) {
+        if (curUser.level < 7) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         Person tmp;
         for (int i = 0; i < pData.tot; i++) {
             pData.getElement(&tmp, i);
@@ -140,6 +161,10 @@ public:
         }
     }
     void changePassword(std::string userid, std::string passwd, std::string oldpasswd = " ") {
+        if (curUser.level < 1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         Person tmp;
         for (int i = 0; i < pData.tot; i++) {
             pData.getElement(&tmp, i);
@@ -158,6 +183,10 @@ public:
         }
     }
     void pswd(std::vector<std::string> v) {
+        if (curUser.level < 1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         if (curUser.level == 7) {
             
         } else {
@@ -165,9 +194,21 @@ public:
         }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
-        
+        if (curUser.level < 3) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
+        if (curBookIndex == -1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         if (isbn != "\"") {
             auto ss = std::string(curBook.ISBN);
+            auto v = iIndex.qryforVal(strToNum(isbn));
+            if (!v.empty()) {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
             if (ss != "\"") {
                 iIndex.deleteVal(strToNum(ss), curBookIndex);
             }
@@ -217,12 +258,25 @@ public:
         bData.replaceElement(curBookIndex, &curBook);
     }
     void import(int quantity, double totalPrice) {
+        if (curUser.level < 3) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
+        if (curBookIndex == -1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         curBook.stock += quantity;
         bData.replaceElement(curBookIndex, &curBook);
         Trade tmp(0, totalPrice);
         tData.addElement(&tmp);
     }
     void show(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"") {
+        if (curUser.level < 1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
+        
         std::vector<int> v;
         std::vector<Book> bookToShow;
         
@@ -274,6 +328,10 @@ public:
         }
     }
     void showfinance(int n = -1) {
+        if (curUser.level < 7) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         double in = 0.0, out = 0.0;
         Trade tmp;
         if (n == -1) {
@@ -292,14 +350,23 @@ public:
         std::cout << "+ " << in << " - " << out << std::endl;
     }
     void buy(std::string isbn, int quantity) {
+        if (curUser.level < 1) {
+            std::cout << "Invalid" << std::endl;
+            return;
+        }
         std::vector<int> v = iIndex.qryforVal(strToNum(isbn));
         for (int i : v) {
             Book hhh = bData.getElement(i);
             if (hhh.ISBN == isbn) {
-                hhh.stock -= quantity;
-                bData.replaceElement(i, &hhh);
-                Trade tmp(hhh.price * quantity, 0);
-                tData.addElement(&tmp);
+                    if (hhh.stock >= quantity) {
+                    hhh.stock -= quantity;
+                    bData.replaceElement(i, &hhh);
+                    Trade tmp(hhh.price * quantity, 0);
+                    tData.addElement(&tmp);
+                } else {
+                    std::cout << "Invalid" << std::endl;
+                    return;
+                }
                 return;
             }
         }
@@ -308,11 +375,13 @@ public:
     void load(std::string f);
     void work(std::fstream *input);
     void exec(std::string cmd) {
-        std::cout << cmd << std::endl;
+        
+//        std::cout << curUser.name << curUser.level << std::endl;
         std::stringstream is(cmd);
         std::string key;
         is >> key;
         std::vector<std::string> v;
+        
         if (key != "modify"){
             v = split(&is);
         }
@@ -363,11 +432,9 @@ public:
             }
             if ((pos = s.find("-price")) != std::string::npos) {
                 auto ss = s.substr(pos + 7, 100);
-                std::cout << ss << std::endl;
                 std::stringstream is(ss);
                 double p = -1.0;
                 is >> p;
-                std::cout << p << std::endl;
                 modify("\"", "\"", "\"", "\"", p);
             }
         } else if (key == "import") {
@@ -377,9 +444,9 @@ public:
             is >> q >> p;
             import(q, p);
         } else if (key == "show") {
-            if (v.size() > 1 && v[1] == "finance") {
-                if (v.size() == 3) {
-                    showfinance(parseStr(v[2]));
+            if (v.size() > 0 && v[0] == "finance") {
+                if (v.size() == 2) {
+                    showfinance(parseStr(v[1]));
                 } else {
                     showfinance();
                 }
@@ -414,7 +481,7 @@ public:
             buy(v[0], parseStr(v[1]));
         } else {
             std::cout << "Invalid" << std::endl;
-            std::cout << key << std::endl;
+            return;
         }
     }
     void run() {

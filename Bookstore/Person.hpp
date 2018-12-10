@@ -25,7 +25,7 @@ public:
     int level;
     
 public:
-    Person();
+    Person():level(0) {};
     Person(char const *u, char const *p, char const *n, int l);
     void print();
 };
