@@ -36,15 +36,15 @@ public:
         file.close();
         file.clear();
         file = std::fstream(filename, std::ios::in|std::ios::out|std::ios::binary);
-        file.seekg(0, std::ios::end);
+        file.seekp(0, std::ios::end);
         if (file.tellg() == 0) {
-            file.seekg(0, std::ios::beg);
+            file.seekp(0, std::ios::beg);
             tot = stot = 0;
             file.write((char*)&tot, sizeof(int));
             file.write((char*)&stot, sizeof(int));
             file.write((char*)stack, StackSize * sizeof(int));
         } else {
-            file.seekg(0, std::ios::beg);
+            file.seekp(0, std::ios::beg);
             file.read((char*)&tot, sizeof(int));
             file.read((char*)&stot, sizeof(int));
             file.read((char*)stack, StackSize * sizeof(int));
@@ -52,7 +52,7 @@ public:
     }
     
     ~DataBase() {
-        file.seekg(0, std::ios::beg);
+        file.seekp(0, std::ios::beg);
         file.write((char*)&tot, sizeof(int));
         file.write((char*)&stot, sizeof(int));
         file.write((char*)stack, StackSize * sizeof(int));
@@ -60,20 +60,20 @@ public:
     }
     
     T getElement(int index) {
-        file.seekg(BaseSize + DataSize * index, std::ios::beg);
+        file.seekp(BaseSize + DataSize * index, std::ios::beg);
         T ret;
         file.read((char*)&ret, DataSize);
         return ret;
     }
     
     void getElement(T *t, int index, int sizeToRead = DataSize) {
-        file.seekg(BaseSize + DataSize * index, std::ios::beg);
+        file.seekp(BaseSize + DataSize * index, std::ios::beg);
         file.read((char*)t, sizeToRead);
     }
     
     void delElement(int index) {
         T tmp = T();
-        file.seekg(BaseSize + DataSize * index, std::ios::beg);
+        file.seekp(BaseSize + DataSize * index, std::ios::beg);
         file.write((char*)&tmp, DataSize);
         if (stot < StackSize - 1) {
             stack[stot] = index;

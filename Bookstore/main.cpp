@@ -14,11 +14,47 @@ int main(int argc, const char * argv[]) {
     a.run();
 //    Blocks idx;
 //    idx.init("./hhh.bi");
-//    for (int i = 0; i < 20000; i++) {
-//        idx.insertVal(1, i);
-//        idx.insertVal(2, i);
-//        idx.deleteVal(rand()%2 + 1, i);
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 2; j++) {
+//            idx.insertVal(rand()%3 + 233, i);
+//        }
 //    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 5; j++) {
+//            idx.deleteVal(rand()%3 + 233, i);
+//        }
+//    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 2; j++) {
+//            idx.insertVal(rand()%3 + 233, i);
+//        }
+//    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 5; j++) {
+//            idx.deleteVal(rand()%3 + 233, i);
+//        }
+//    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 2; j++) {
+//            idx.insertVal(rand()%3 + 233, i);
+//        }
+//    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 5; j++) {
+//            idx.deleteVal(rand()%3 + 233, i);
+//        }
+//    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 2; j++) {
+//            idx.insertVal(rand()%3 + 233, i);
+//        }
+//    }
+//    for (int i = 0; i < 3000; i++) {
+//        for (int j = 0; j < 5; j++) {
+//            idx.deleteVal(rand()%3 + 233, i);
+//        }
+//    }
+//
 //    freopen("tmp.out","w",stdout);
 //    idx.print();
 //

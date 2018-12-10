@@ -56,7 +56,7 @@ public:
         file.close();
         file.clear();
         file = std::fstream(filename, std::ios::out|std::ios::in|std::ios::binary);
-        file.seekg(0, std::ios::end);
+        file.seekp(0, std::ios::end);
         if (file.tellg() == 0) {
             file.seekp(0, std::ios::beg);
             tot = 1;
@@ -65,7 +65,7 @@ public:
             file.write((char*)&tot, sizeof(int));
             file.write((char*)&blk, BlockSize);
         } else {
-            file.seekg(0, std::ios::beg);
+            file.seekp(0, std::ios::beg);
             file.read((char*)&tot, sizeof(int));
         }
     }
@@ -73,7 +73,7 @@ public:
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++) {
-            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, BlockSize);
             
             printf("BLOCK %d (%d) tot:%d max:%d min:%d nx:%d\n", cur, i, tmp.tot, tmp.maxVal, tmp.minVal, tmp.nxt);
@@ -93,7 +93,7 @@ public:
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++) {
-            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
             
             if (tmp.maxVal < key && i < tot - 1) {
@@ -154,10 +154,10 @@ public:
 		std::vector<int> ret;
         int cur = 0;
         for (int i = 0; i < tot; i++, cur = tmp.nxt) {
-            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
-				file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+				file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
 				file.read((char*)&tmp, BlockSize);
                 
 				for (int j = 0; j < tmp.tot; j++) {
@@ -176,10 +176,10 @@ public:
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++, cur = tmp.nxt) {
-            file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
+            file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
-                file.seekg(-4 * sizeof(int), std::ios::cur);
+                file.seekp(-4 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);
                 for (int j = 0; j < tmp.tot; j++) {
                     if (tmp.key[j] == key && tmp.id[j] == id) {
@@ -190,7 +190,7 @@ public:
                             std::swap(tmp.key[j], tmp.key[tmp.tot]);
                             std::swap(tmp.id[j], tmp.id[tmp.tot]);
                         }
-                        file.seekg(-BlockSize, std::ios::cur);
+                        file.seekp(-BlockSize, std::ios::cur);
                         file.write((char*)&tmp, BlockSize);
                         return;
                     }
