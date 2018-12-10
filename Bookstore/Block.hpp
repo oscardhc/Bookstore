@@ -115,11 +115,12 @@ public:
                     if (tmp.minVal == tmp.maxVal - 1) {
                         midVal = tmp.minVal;
                     }
+                    int flag = tmp.minVal == tmp.maxVal;
                     Block blk;
                     tmp.reset();
                     blk.reset();
                     for (int j = 0; j < sqrSize; j++) {
-                        if ((tmp.key[j] <= midVal) || (tmp.minVal == tmp.maxVal && j < sqrSize / 2)) {
+                        if ((!flag && tmp.key[j] <= midVal) || (flag && j < sqrSize / 2)) {
                             tmp.key[tmp.tot] = tmp.key[j];
                             tmp.id[tmp.tot] = tmp.id[j];
                             tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
