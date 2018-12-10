@@ -90,7 +90,6 @@ public:
         tot++;
     }
     void insertVal(int key, int id) {
-//        printf("ins... %d %d\n", key, id);
         Block tmp;
         int cur = 0;
         for (int i = 0; i < tot; i++) {
@@ -151,8 +150,6 @@ public:
         }
     }
     std::vector<int> qryforVal(int key) {
-//        printf("now querying for %d...\n", key);
-//        print();
         Block tmp;
 		std::vector<int> ret;
         int cur = 0;
@@ -181,7 +178,6 @@ public:
         for (int i = 0; i < tot; i++, cur = tmp.nxt) {
             file.seekg(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
-            
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
                 file.seekg(-4 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);

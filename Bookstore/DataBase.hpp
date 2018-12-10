@@ -76,7 +76,8 @@ public:
         file.seekg(BaseSize + DataSize * index, std::ios::beg);
         file.write((char*)&tmp, DataSize);
         if (stot < StackSize - 1) {
-            stack[++stot] = index;
+            stack[stot] = index;
+            stot++;
         }
     }
     
