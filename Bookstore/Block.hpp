@@ -16,7 +16,7 @@
 #include <vector>
 #include <cstring>
 
-const int sqrSize = 2000;
+const int sqrSize = 80;
 
 class Block {
     
