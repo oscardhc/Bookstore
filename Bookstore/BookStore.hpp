@@ -114,18 +114,22 @@ public:
         }
         curBook = bData.getElement(curBookIndex);
     }
-    void su(std::string username, std::string password) {
+    void su(std::vector<std::string> v) {
         Person tmp;
         for (int i = 0; i < pData.tot; i++) {
             pData.getElement(&tmp, i);
-            if (std::string(tmp.userid) == username) {
-                if (std::string(tmp.passwd) == password) {
+            if (std::string(tmp.userid) == v[0]) {
+                if (tmp.level < curUser.level || std::string(tmp.passwd) == v[1]) {
                     curUser = tmp;
                     curUserIndex = i;
+                } else {
+                    std::cout << "Invalid" << std::endl;
                 }
                 return;
             }
         }
+        std::cout << "Invalid" << std::endl;
+        return;
     }
     void logout() {
         if (curUser.level < 1) {
@@ -140,11 +144,20 @@ public:
             std::cout << "Invalid" << std::endl;
             return;
         }
-        Person tmp(userid.c_str(), passwd.c_str(), name.c_str(), parseStr(level));
+        Person tmp;
+        for (int i = 0; i < pData.tot; i++) {
+            pData.getElement(&tmp, i);
+            if (std::string(tmp.userid) == userid) {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
+        }
+        tmp = Person(userid.c_str(), passwd.c_str(), name.c_str(), parseStr(level));
         pData.addElement(&tmp);
     }
     void regi(std::string userid, std::string passwd, std::string name) {
-        Person tmp(userid.c_str(), passwd.c_str(), name.c_str(), 1);
+        Person tmp;
+        tmp = Person(userid.c_str(), passwd.c_str(), name.c_str(), 1);
         pData.addElement(&tmp);
     }
     void del(std::string userid) {
@@ -157,8 +170,11 @@ public:
             pData.getElement(&tmp, i);
             if (std::string(tmp.userid) == userid) {
                 pData.delElement(i);
+                return;
             }
         }
+        std::cout << "Invalid" << std::endl;
+        return;
     }
     void changePassword(std::string userid, std::string passwd, std::string oldpasswd = " ") {
         if (curUser.level < 1) {
@@ -176,21 +192,32 @@ public:
                         curUser = tmp;
                     }
                 } else {
-                    
+                    std::cout << "Invalid" << std::endl;
+                    return;
                 }
                 return;
             }
         }
+        std::cout << "Invalid" << std::endl;
+        return;
     }
     void pswd(std::vector<std::string> v) {
         if (curUser.level < 1) {
             std::cout << "Invalid" << std::endl;
             return;
         }
-        if (v[0] == "root") {
-            changePassword(v[0], v[1]);
+        if (curUser.level == 7) {
+            if (v.size() == 2) changePassword(v[0], v[1]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else {
-            changePassword(v[0], v[2], v[1]);
+            if (v.size() == 3) changePassword(v[0], v[2], v[1]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
@@ -376,7 +403,7 @@ public:
     void work(std::fstream *input);
     void exec(std::string cmd) {
         
-//        std::cout << cmd << std::endl;
+//        std::cout << "          " << cmd << std::endl;
         std::stringstream is(cmd);
         std::string key;
         is >> key;
@@ -390,13 +417,21 @@ public:
         } else if (key == "exit") {
             throw 1;
         } else if (key == "su") {
-            su(v[0], v[1]);
+            su(v);
         } else if (key == "logout") {
             logout();
         } else if (key == "useradd") {
-            useradd(v[0], v[1], v[2], v[3]);
+            if (v.size() == 4) useradd(v[0], v[1], v[2], v[3]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else if (key == "register") {
-            regi(v[0], v[1], v[2]);
+            if (v.size() == 3) regi(v[0], v[1], v[2]);
+            else {
+                std::cout << "Invalid" << std::endl;
+                return;
+            }
         } else if (key == "delete") {
             del(v[0]);
         } else if (key == "passwd") {
