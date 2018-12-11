@@ -24,7 +24,14 @@ public:
     char ISBN[ISBNSize], name[NameSize], author[NameSize], keyword[NameSize];
     double price;
     int stock;
-    Book(char const *i = "\"", char const *n = "\"", char const *a = "\"", char const *k = "\"", const double p = -1.0, const int s = 0);
+    Book(char const *i = "\"", char const *n = "\"", char const *a = "\"", char const *k = "\"", const double p = -1.0, const int s = 0) {
+        memcpy(ISBN, i, ISBNSize);
+        memcpy(name, n, NameSize);
+        memcpy(author, a, NameSize);
+        memcpy(keyword, k, NameSize);
+        price = p;
+        stock = s;
+    }
     bool operator < (const Book &a) const {
         return std::string(ISBN) < std::string(a.ISBN);
     }

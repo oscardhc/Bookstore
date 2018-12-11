@@ -17,7 +17,7 @@
 #include <cstring>
 #include <iostream>
 
-const int sqrSize = 800;
+const int sqrSize = 900;
 
 class Block {
     
@@ -101,7 +101,6 @@ public:
                 cur = tmp.nxt;
                 continue;
             } else {
-//                std::cout << "ins " << key << " " << id << " " << cur << std::endl;
                 file.seekp(-4 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);
                 tmp.tot++;
@@ -110,21 +109,12 @@ public:
                 tmp.maxVal = std::max(tmp.maxVal, key);
                 tmp.minVal = std::min(tmp.minVal, key);
                 if (tmp.tot == sqrSize) {
-//                    std::cout << "split!!!!" << std::endl;
-                    //                    int midVal = 0, midary[sqrSize] = {0};
-                    //                    memcpy(midary, tmp.key, sqrSize * sizeof(int));
-                    //                    std::nth_element(midary, midary + sqrSize / 2, midary + sqrSize);
-                    //                    midVal = midary[sqrSize / 2];
                     std::pair<int, int> mda[sqrSize];
                     for (int j = 0; j < sqrSize; j++) {
                         mda[j].first = tmp.key[j];
                         mda[j].second = tmp.id[j];
                     }
                     std::sort(mda, mda + sqrSize);
-                    //                    if (tmp.minVal == tmp.maxVal - 1) {
-                    //                        midVal = tmp.minVal;
-                    //                    }
-                    //                    int flag = tmp.minVal == tmp.maxVal;
                     Block blk;
                     tmp.reset();
                     blk.reset();
@@ -143,21 +133,6 @@ public:
                             blk.tot++;
                         }
                     }
-                    //                    for (int j = 0; j < sqrSize; j++) {
-                    //                        if ((!flag && tmp.key[j] <= midVal) || (flag && j < sqrSize / 2)) {
-                    //                            tmp.key[tmp.tot] = tmp.key[j];
-                    //                            tmp.id[tmp.tot] = tmp.id[j];
-                    //                            tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
-                    //                            tmp.maxVal = std::max(tmp.maxVal, tmp.key[j]);
-                    //                            tmp.tot++;
-                    //                        } else {
-                    //                            blk.key[blk.tot] = tmp.key[j];
-                    //                            blk.id[blk.tot] = tmp.id[j];
-                    //                            blk.minVal = std::min(blk.minVal, tmp.key[j]);
-                    //                            blk.maxVal = std::max(blk.maxVal, tmp.key[j]);
-                    //                            blk.tot++;
-                    //                        }
-                    //                    }
                     blk.nxt = tmp.nxt;
                     tmp.nxt = tot;
                     

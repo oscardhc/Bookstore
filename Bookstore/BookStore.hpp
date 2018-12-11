@@ -20,35 +20,9 @@
 #include "Block.hpp"
 #include "Trade.hpp"
 
-class BookStore {
-public:
-    Person curUser;
-    int curUserIndex;
-    Book curBook;
-    int curBookIndex;
-    Blocks iIndex, nIndex, aIndex, kIndex, pIndex;
-    DataBase<Book, sizeof(Book)> bData;
-    DataBase<Person, sizeof(Person)> pData;
-    DataBase<Trade, sizeof(Trade)> tData;
+class Parser {
     
 public:
-    BookStore() {
-        std::cout << std::fixed << std::setprecision(2);
-        curBookIndex = -1;
-        iIndex.init("./isbn_index.bi");
-        nIndex.init("./name_index.bi");
-        aIndex.init("./author_index.bi");
-        kIndex.init("./keyword_index.bi");
-        pIndex.init("./price_index.bi");
-        bData.init("./book_data.bi");
-        pData.init("./person_data.bi");
-        tData.init("./trade_data.bi");
-        if (pData.tot == 0) {
-            curUser.level = 233;
-            useradd("root", "sjtu", "7", "yyu");
-        }
-    }
-    
     int strToNum(std::string str) {
         int n = (int)strlen(str.c_str()), bs = 131;
         long long ret = 0;
@@ -99,17 +73,49 @@ public:
         return ret;
     }
 
+}parser;
+
+class BookStore {
+private:
+    Person curUser;
+    int curUserIndex;
+    Book curBook;
+    int curBookIndex;
+    Blocks iIndex, nIndex, aIndex, kIndex, pIndex;
+    DataBase<Book, sizeof(Book)> bData;
+    DataBase<Person, sizeof(Person)> pData;
+    DataBase<Trade, sizeof(Trade)> tData;
+    
+public:
+    BookStore() {
+        std::cout << std::fixed << std::setprecision(2);
+        curBookIndex = -1;
+        iIndex.init("./isbn_index.bi");
+        nIndex.init("./name_index.bi");
+        aIndex.init("./author_index.bi");
+        kIndex.init("./keyword_index.bi");
+        pIndex.init("./price_index.bi");
+        bData.init("./book_data.bi");
+        pData.init("./person_data.bi");
+        tData.init("./trade_data.bi");
+        if (pData.tot == 0) {
+            curUser.level = 233;
+            useradd("root", "sjtu", "7", "yyu");
+        }
+    }
+    
+    
     void select(std::string isbn) {
         if (curUser.level < 3) {
             std::cout << "Invalid" << std::endl;
             return;
         }
-        int num = strToNum(isbn);
+        int num = parser.strToNum(isbn);
         auto v = iIndex.qryforVal(num);
         if (v.empty()) {
             Book bk(isbn.c_str(), "", "", "", 0, 0);
             curBookIndex = bData.addElement(&bk);
-            iIndex.insertVal(strToNum(isbn), curBookIndex);
+            iIndex.insertVal(parser.strToNum(isbn), curBookIndex);
         } else {
             curBookIndex = v[0];
         }
@@ -141,7 +147,7 @@ public:
         curUser = Person();
     }
     void useradd(std::string userid, std::string passwd, std::string level, std::string name) {
-        if (curUser.level < 3 || curUser.level <= parseStr(level)) {
+        if (curUser.level < 3 || curUser.level <= parser.parseStr(level)) {
             std::cout << "Invalid" << std::endl;
             return;
         }
@@ -153,7 +159,7 @@ public:
                 return;
             }
         }
-        tmp = Person(userid.c_str(), passwd.c_str(), name.c_str(), parseStr(level));
+        tmp = Person(userid.c_str(), passwd.c_str(), name.c_str(), parser.parseStr(level));
         pData.addElement(&tmp);
     }
     void regi(std::string userid, std::string passwd, std::string name) {
@@ -232,45 +238,45 @@ public:
         }
         if (isbn != "\"") {
             auto ss = std::string(curBook.ISBN);
-            auto v = iIndex.qryforVal(strToNum(isbn));
+            auto v = iIndex.qryforVal(parser.strToNum(isbn));
             if (!v.empty()) {
                 std::cout << "Invalid" << std::endl;
                 return;
             }
             if (ss != "\"") {
-                iIndex.deleteVal(strToNum(ss), curBookIndex);
+                iIndex.deleteVal(parser.strToNum(ss), curBookIndex);
             }
-            iIndex.insertVal(strToNum(isbn), curBookIndex);
+            iIndex.insertVal(parser.strToNum(isbn), curBookIndex);
             memcpy(curBook.ISBN, isbn.c_str(), ISBNSize);
         }
         if (name != "\"") {
             auto ss = std::string(curBook.name);
             if (ss != "\"") {
-                nIndex.deleteVal(strToNum(ss), curBookIndex);
+                nIndex.deleteVal(parser.strToNum(ss), curBookIndex);
             }
-            nIndex.insertVal(strToNum(name), curBookIndex);
+            nIndex.insertVal(parser.strToNum(name), curBookIndex);
             memcpy(curBook.name, name.c_str(), NameSize);
         
         }
         if (author != "\"") {
             auto ss = std::string(curBook.author);
             if (ss != "\"") {
-                aIndex.deleteVal(strToNum(ss), curBookIndex);
+                aIndex.deleteVal(parser.strToNum(ss), curBookIndex);
             }
-            aIndex.insertVal(strToNum(author), curBookIndex);
+            aIndex.insertVal(parser.strToNum(author), curBookIndex);
             memcpy(curBook.author, author.c_str(), NameSize);
         }
         if (keyword != "\"") {
             auto ss = std::string(curBook.keyword);
             if (ss != "\"") {
-                auto v1 = splitKeyword(&ss);
+                auto v1 = parser.splitKeyword(&ss);
                 for (auto i : v1) {
-                    kIndex.deleteVal(strToNum(i), curBookIndex);
+                    kIndex.deleteVal(parser.strToNum(i), curBookIndex);
                 }
             }
-            auto v2 = splitKeyword(&keyword);
+            auto v2 = parser.splitKeyword(&keyword);
             for (auto i : v2) {
-                kIndex.insertVal(strToNum(i), curBookIndex);
+                kIndex.insertVal(parser.strToNum(i), curBookIndex);
             }
             memcpy(curBook.keyword, keyword.c_str(), NameSize);
         }
@@ -310,7 +316,7 @@ public:
         
         Book hhh;
         if (isbn != "\"") {
-            v = iIndex.qryforVal(strToNum(isbn));
+            v = iIndex.qryforVal(parser.strToNum(isbn));
             for (int i : v) {
                 bData.getElement(&hhh, i);
                 if (hhh.ISBN == isbn) {
@@ -318,7 +324,7 @@ public:
                 }
             }
         } else if (name != "\"") {
-            v = nIndex.qryforVal(strToNum(name));
+            v = nIndex.qryforVal(parser.strToNum(name));
             
             for (int i : v) {
                 bData.getElement(&hhh, i);
@@ -327,7 +333,7 @@ public:
                 }
             }
         } else if (author != "\"") {
-            v = aIndex.qryforVal(strToNum(author));
+            v = aIndex.qryforVal(parser.strToNum(author));
             for (int i : v) {
                 bData.getElement(&hhh, i);
                 if (hhh.author == author) {
@@ -335,7 +341,7 @@ public:
                 }
             }
         } else if (keyword != "\"") {
-            v = kIndex.qryforVal(strToNum(keyword));
+            v = kIndex.qryforVal(parser.strToNum(keyword));
             for (int i : v) {
                 bData.getElement(&hhh, i);
                 if (std::string(hhh.keyword).find(keyword) != std::string::npos) {
@@ -382,7 +388,7 @@ public:
             std::cout << "Invalid" << std::endl;
             return;
         }
-        std::vector<int> v = iIndex.qryforVal(strToNum(isbn));
+        std::vector<int> v = iIndex.qryforVal(parser.strToNum(isbn));
         for (int i : v) {
             Book hhh = bData.getElement(i);
             if (hhh.ISBN == isbn) {
@@ -411,7 +417,7 @@ public:
         std::vector<std::string> v;
         
         if (key != "modify"){
-            v = split(&is);
+            v = parser.split(&is);
         }
         if (key == "load") {
             if (v.size() == 1) load(v[0]);
@@ -468,17 +474,17 @@ public:
                 modify(ss, "\"", "\"", "\"", -1.0);
             }
             if ((pos = s.find("-name")) != std::string::npos) {
-                auto pr = nextQuote(pos, &s);
+                auto pr = parser.nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
                 modify("\"", ss, "\"", "\"", -1.0);
             }
             if ((pos = s.find("-author")) != std::string::npos) {
-                auto pr = nextQuote(pos, &s);
+                auto pr = parser.nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
                 modify("\"", "\"", ss, "\"", -1.0);
             }
             if ((pos = s.find("-keyword")) != std::string::npos) {
-                auto pr = nextQuote(pos, &s);
+                auto pr = parser.nextQuote(pos, &s);
                 auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
                 modify("\"", "\"", "\"", ss, -1.0);
             }
@@ -502,7 +508,7 @@ public:
         } else if (key == "show") {
             if (v.size() > 0 && v[0] == "finance") {
                 if (v.size() == 2) {
-                    showfinance(parseStr(v[1]));
+                    showfinance(parser.parseStr(v[1]));
                 } else {
                     showfinance();
                 }
@@ -518,15 +524,15 @@ public:
                     }
                     show(ss, "\"", "\"", "\"");
                 } else if ((pos = s.find("-name")) != std::string::npos) {
-                    auto pr = nextQuote(pos, &s);
+                    auto pr = parser.nextQuote(pos, &s);
                     auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
                     show("\"", ss, "\"", "\"");
                 } else if ((pos = s.find("-author")) != std::string::npos) {
-                    auto pr = nextQuote(pos, &s);
+                    auto pr = parser.nextQuote(pos, &s);
                     auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
                     show("\"", "\"", ss, "\"");
                 } else if ((pos = s.find("-keyword")) != std::string::npos) {
-                    auto pr = nextQuote(pos, &s);
+                    auto pr = parser.nextQuote(pos, &s);
                     auto ss = s.substr(pr.first + 1, pr.second - pr.first - 1);
                     show("\"", "\"", "\"", ss);
                 } else {
@@ -538,7 +544,7 @@ public:
                 std::cout << "Invalid" << std::endl;
                 return;
             }
-            buy(v[0], parseStr(v[1]));
+            buy(v[0], parser.parseStr(v[1]));
         } else {
             std::cout << "Invalid" << std::endl;
             return;
@@ -549,5 +555,35 @@ public:
         work(&f);
     }
 };
+
+void BookStore::load(std::string f) {
+    std::fstream cmdText(f, std::ios::in);
+    work(&cmdText);
+}
+void BookStore::work(std::fstream *input) {
+    char str[205];
+    if (input->good()) {
+        curUser = pData.getElement(0);
+        curUserIndex = 0;
+        while (input->getline(str, 200)) {
+            try {
+                exec(std::string(str));
+            } catch(int) {
+                return;
+            }
+        }
+    } else {
+        curUser = Person();
+        curUserIndex = -1;
+        while (std::cin.getline(str, 200)) {
+            try {
+                exec(std::string(str));
+            } catch(int) {
+                return;
+            }
+        }
+    }
+    
+}
 
 #endif /* BookStore_hpp */

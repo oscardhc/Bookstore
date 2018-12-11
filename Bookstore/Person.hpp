@@ -26,8 +26,15 @@ public:
     
 public:
     Person():level(0) {};
-    Person(char const *u, char const *p, char const *n, int l);
-    void print();
+    Person(char const *u, char const *p, char const *n, int l) {
+        memcpy(userid, u, StrSIZE);
+        memcpy(passwd, p, StrSIZE);
+        memcpy(name, n, StrSIZE);
+        level = l;
+    }
+    void print() {
+        std::cout << userid << " - " << passwd << " - " << name << " - " << level << std::endl;
+    }
 };
 
 #endif /* Person_hpp */
