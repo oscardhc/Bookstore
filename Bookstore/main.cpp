@@ -13,11 +13,12 @@ int main(int argc, const char * argv[]) {
 //    freopen("hh.out","w",stdout);
     BookStore a;
     a.run();
-//    for (int i = 0; i < 10000; i++) {
+//    for (int i = 0; i < 100; i++) {
 //        std::cout << i << std::endl;
 //        a.select(std::to_string(i));
-//        a.modify("\"", "\"", "\"", "a|b|c|d|e|f|g|h|i|j|k|h", -1.0);
 //        a.modify("\"", "\"", "\"", "faadhsjkfcgaasd", -1.0);
+//        a.modify("\"", "\"", "\"", "a|b|c|d|e|f|g|h|i|j|k|h", -1.0);
+//        a.modify("\"", "\"", "\"", "a|b|c|d|e|f|g|h|i|j|k|h", -1.0);
 //        a.modify("\"", "\"", "\"", "fadhsjkfcg11aasd", -1.0);
 //        a.modify("\"", "\"", "\"", "fad1hsjkfcgaa432sd", -1.0);
 //        a.modify("\"", "\"", "\"", "fadhs1jkfcgaasd", -1.0);
@@ -27,9 +28,9 @@ int main(int argc, const char * argv[]) {
 //        a.modify("\"", "\"", "\"", "fadhsaasd", -1.0);
 //        a.modify("\"", "\"", "\"", "fadhsjkfcgasaasd", -1.0);
 //        a.modify("\"", "\"", "\"", "fadhsjkfcgsd", -1.0);
-//        a.kIndex.print();
 //    }
-    
+//    a.kIndex.print();
+
 //
 //    freopen("tmp.out","w",stdout);
 //    idx.print();

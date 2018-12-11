@@ -130,16 +130,16 @@ public:
                     blk.reset();
                     for (int j = 0; j < sqrSize; j++) {
                         if (j < sqrSize / 2) {
-                            tmp.key[tmp.tot] = tmp.key[j];
-                            tmp.id[tmp.tot] = tmp.id[j];
+                            tmp.key[tmp.tot] = mda[j].first;
+                            tmp.id[tmp.tot] = mda[j].second;
                             tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
                             tmp.maxVal = std::max(tmp.maxVal, tmp.key[j]);
                             tmp.tot++;
                         } else {
-                            blk.key[blk.tot] = tmp.key[j];
-                            blk.id[blk.tot] = tmp.id[j];
-                            blk.minVal = std::min(blk.minVal, tmp.key[j]);
-                            blk.maxVal = std::max(blk.maxVal, tmp.key[j]);
+                            blk.key[blk.tot] = mda[j].first;
+                            blk.id[blk.tot] = mda[j].second;
+                            blk.minVal = std::min(blk.minVal, blk.key[j]);
+                            blk.maxVal = std::max(blk.maxVal, blk.key[j]);
                             blk.tot++;
                         }
                     }
