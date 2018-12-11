@@ -101,7 +101,7 @@ public:
                 cur = tmp.nxt;
                 continue;
             } else {
-                std::cout << "ins " << key << " " << id << " " << cur << std::endl;
+//                std::cout << "ins " << key << " " << id << " " << cur << std::endl;
                 file.seekp(-4 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);
                 tmp.tot++;
@@ -110,7 +110,7 @@ public:
                 tmp.maxVal = std::max(tmp.maxVal, key);
                 tmp.minVal = std::min(tmp.minVal, key);
                 if (tmp.tot == sqrSize) {
-                    std::cout << "split!!!!" << std::endl;
+//                    std::cout << "split!!!!" << std::endl;
                     //                    int midVal = 0, midary[sqrSize] = {0};
                     //                    memcpy(midary, tmp.key, sqrSize * sizeof(int));
                     //                    std::nth_element(midary, midary + sqrSize / 2, midary + sqrSize);
