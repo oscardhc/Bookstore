@@ -21,6 +21,7 @@
 #include "Trade.hpp"
 
 class BookStore {
+public:
     Person curUser;
     int curUserIndex;
     Book curBook;

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <iostream>
 
 const int sqrSize = 200;
 
@@ -100,6 +101,7 @@ public:
                 cur = tmp.nxt;
                 continue;
             } else {
+                std::cout << "ins " << key << " " << id << " " << cur << std::endl;
                 file.seekp(-4 * sizeof(int), std::ios::cur);
                 file.read((char*)&tmp, BlockSize);
                 tmp.tot++;
@@ -108,19 +110,26 @@ public:
                 tmp.maxVal = std::max(tmp.maxVal, key);
                 tmp.minVal = std::min(tmp.minVal, key);
                 if (tmp.tot == sqrSize) {
-                    int midVal = 0, midary[sqrSize] = {0};
-                    memcpy(midary, tmp.key, sqrSize * sizeof(int));
-                    std::nth_element(midary, midary + sqrSize / 2, midary + sqrSize);
-                    midVal = midary[sqrSize / 2];
-                    if (tmp.minVal == tmp.maxVal - 1) {
-                        midVal = tmp.minVal;
+                    std::cout << "split!!!!" << std::endl;
+                    //                    int midVal = 0, midary[sqrSize] = {0};
+                    //                    memcpy(midary, tmp.key, sqrSize * sizeof(int));
+                    //                    std::nth_element(midary, midary + sqrSize / 2, midary + sqrSize);
+                    //                    midVal = midary[sqrSize / 2];
+                    std::pair<int, int> mda[sqrSize];
+                    for (int j = 0; j < sqrSize; j++) {
+                        mda[j].first = tmp.key[j];
+                        mda[j].second = tmp.id[j];
                     }
-                    int flag = tmp.minVal == tmp.maxVal;
+                    std::sort(mda, mda + sqrSize);
+                    //                    if (tmp.minVal == tmp.maxVal - 1) {
+                    //                        midVal = tmp.minVal;
+                    //                    }
+                    //                    int flag = tmp.minVal == tmp.maxVal;
                     Block blk;
                     tmp.reset();
                     blk.reset();
                     for (int j = 0; j < sqrSize; j++) {
-                        if ((!flag && tmp.key[j] <= midVal) || (flag && j < sqrSize / 2)) {
+                        if (j < sqrSize / 2) {
                             tmp.key[tmp.tot] = tmp.key[j];
                             tmp.id[tmp.tot] = tmp.id[j];
                             tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
@@ -134,6 +143,21 @@ public:
                             blk.tot++;
                         }
                     }
+                    //                    for (int j = 0; j < sqrSize; j++) {
+                    //                        if ((!flag && tmp.key[j] <= midVal) || (flag && j < sqrSize / 2)) {
+                    //                            tmp.key[tmp.tot] = tmp.key[j];
+                    //                            tmp.id[tmp.tot] = tmp.id[j];
+                    //                            tmp.minVal = std::min(tmp.minVal, tmp.key[j]);
+                    //                            tmp.maxVal = std::max(tmp.maxVal, tmp.key[j]);
+                    //                            tmp.tot++;
+                    //                        } else {
+                    //                            blk.key[blk.tot] = tmp.key[j];
+                    //                            blk.id[blk.tot] = tmp.id[j];
+                    //                            blk.minVal = std::min(blk.minVal, tmp.key[j]);
+                    //                            blk.maxVal = std::max(blk.maxVal, tmp.key[j]);
+                    //                            blk.tot++;
+                    //                        }
+                    //                    }
                     blk.nxt = tmp.nxt;
                     tmp.nxt = tot;
                     
@@ -151,23 +175,23 @@ public:
     }
     std::vector<int> qryforVal(int key) {
         Block tmp;
-		std::vector<int> ret;
+        std::vector<int> ret;
         int cur = 0;
         for (int i = 0; i < tot; i++, cur = tmp.nxt) {
             file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
-				file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
-				file.read((char*)&tmp, BlockSize);
+                file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
+                file.read((char*)&tmp, BlockSize);
                 
-				for (int j = 0; j < tmp.tot; j++) {
-					if (tmp.key[j] == key && tmp.id[j] != -1) {
-						ret.push_back(tmp.id[j]);
-					}
-				}
-				if (i == tot - 1 || tmp.maxVal > key) {
-					return ret;
-				}
+                for (int j = 0; j < tmp.tot; j++) {
+                    if (tmp.key[j] == key && tmp.id[j] != -1) {
+                        ret.push_back(tmp.id[j]);
+                    }
+                }
+                if (i == tot - 1 || tmp.maxVal > key) {
+                    return ret;
+                }
             }
         }
         return ret;
