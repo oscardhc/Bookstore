@@ -17,7 +17,7 @@
 #include <cstring>
 #include <iostream>
 
-const int sqrSize = 300;
+const int sqrSize = 400;
 
 class Block {
     
