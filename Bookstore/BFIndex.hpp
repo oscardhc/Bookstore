@@ -48,7 +48,7 @@ public:
     std::vector<int> qryforVal(int key) {
         Pair tmp;
         std::vector<int> ret;
-        for (int i = 0; i < db.tot; i++) {
+        for (int i = db.tot - 1; i >= 0; i--) {
             db.getElement(&tmp, i, sizeof(int));
             if (tmp.key == key) {
                 db.getElement(&tmp, i);
@@ -61,7 +61,7 @@ public:
     }
     void deleteVal(int key, int id) {
         Pair tmp;
-        for (int i = 0; i < db.tot; i++) {
+        for (int i = db.tot - 1; i >= 0; i--) {
             db.getElement(&tmp, i);
             if (tmp.key == key && tmp.id == key) {
                 db.delElement(i);
