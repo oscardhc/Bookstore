@@ -17,8 +17,9 @@
 #include "Person.hpp"
 #include "Book.hpp"
 #include "DataBase.hpp"
-#include "Block.hpp"
+//#include "Block.hpp"
 #include "Trade.hpp"
+#include "BFIndex.hpp"
 
 class Parser {
     
