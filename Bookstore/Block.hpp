@@ -20,18 +20,15 @@
 const int sqrSize = 900;
 
 class Block {
-    
 public:
     int minVal, maxVal;
     int nxt;
     int tot, key[sqrSize], id[sqrSize];
-    
     void reset() {
         tot = 0;
         minVal = INT_MAX;
         maxVal = INT_MIN;
     }
-    
 };
 
 const int BlockSize = (4 + sqrSize * 2) * sizeof(int);
@@ -41,7 +38,7 @@ class Blocks {
     int tot;
     std::fstream file;
     std::string filename;
-    
+
 public:
     ~Blocks() {
         file.seekp(0, std::ios::beg);
@@ -49,7 +46,6 @@ public:
         file.close();
     }
     Blocks() {
-        
     }
     void init (std::string _filename) {
         filename = _filename;
@@ -76,12 +72,10 @@ public:
         for (int i = 0; i < tot; i++) {
             file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, BlockSize);
-            
             printf("BLOCK %d (%d) tot:%d max:%d min:%d nx:%d\n", cur, i, tmp.tot, tmp.maxVal, tmp.minVal, tmp.nxt);
             for (int j = 0; j < tmp.tot; j++) {
                 printf("            %d %d\n", tmp.key[j], tmp.id[j]);
             }
-            
             cur = tmp.nxt;
         }
     }
@@ -96,7 +90,6 @@ public:
         for (int i = 0; i < tot; i++) {
             file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
-            
             if (tmp.maxVal < key && i < tot - 1) {
                 cur = tmp.nxt;
                 continue;
@@ -135,10 +128,8 @@ public:
                     }
                     blk.nxt = tmp.nxt;
                     tmp.nxt = tot;
-                    
                     file.seekp(-BlockSize, std::ios::cur);
                     file.write((char*)&tmp, BlockSize);
-                    
                     addBlock(&blk);
                 } else {
                     file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
@@ -158,7 +149,6 @@ public:
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
                 file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
                 file.read((char*)&tmp, BlockSize);
-                
                 for (int j = 0; j < tmp.tot; j++) {
                     if (tmp.key[j] == key && tmp.id[j] != -1) {
                         ret.push_back(tmp.id[j]);
