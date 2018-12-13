@@ -6,7 +6,7 @@
 //  Copyright © 2018 Haichen Dong. All rights reserved.
 //
 
-#include "Bookstore.hpp"
+#include "BookStore.hpp"
 
 int main(int argc, const char * argv[]) {
     BookStore a;
