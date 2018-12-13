@@ -22,7 +22,7 @@ const int sqrSize = 900;
 class Block {
 public:
     int minVal, maxVal;
-    int nxt, tot, val[sqrSize];
+    int nxt, tot, val[sqrSize * 2];
     void reset() {
         tot = 0;
         minVal = INT_MAX;
@@ -133,7 +133,7 @@ public:
                     }
                     blk.nxt = tmp.nxt;
                     tmp.nxt = tot;
-                    file.seekp(-BlockSize, std::ios::cur);
+                    file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
                     file.write((char*)&tmp, (4 + tmp.tot * 2) * sizeof(int));
                     addBlock(&blk);
                 } else {
@@ -173,7 +173,7 @@ public:
             file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
             file.read((char*)&tmp, 4 * sizeof(int));
             if (tmp.tot > 0 && tmp.minVal <= key && tmp.maxVal >= key) {
-                file.seekp(-4 * sizeof(int), std::ios::cur);
+                file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
                 file.read((char*)&tmp, (4 + tmp.tot * 2) * sizeof(int));
                 for (int j = 0; j < tmp.tot; j++) {
                     if (tmp.key(j) == key && tmp.id(j) == id) {
@@ -184,7 +184,7 @@ public:
                             std::swap(tmp.key(j), tmp.key(tmp.tot));
                             std::swap(tmp.id(j), tmp.id(tmp.tot));
                         }
-                        file.seekp(-BlockSize, std::ios::cur);
+                        file.seekp(BaseSize + cur * BlockSize, std::ios::beg);
                         file.write((char*)&tmp, (4 + tmp.tot * 2) * sizeof(int));
                         return;
                     }

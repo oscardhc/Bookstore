@@ -17,12 +17,12 @@
 #include "Person.hpp"
 #include "Book.hpp"
 #include "DataBase.hpp"
-//#include "Block.hpp"
+#include "Block.hpp"
 #include "Trade.hpp"
-#include "BFIndex.hpp"
+//#include "BFIndex.hpp"
 
 class Parser {
-    
+
 public:
     int strToNum(std::string str) {
         int n = (int)strlen(str.c_str()), bs = 131;
@@ -86,7 +86,7 @@ private:
     DataBase<Book, sizeof(Book)> bData;
     DataBase<Person, sizeof(Person)> pData;
     DataBase<Trade, sizeof(Trade)> tData;
-    
+
 public:
     BookStore() {
         std::cout << std::fixed << std::setprecision(2);
@@ -104,8 +104,8 @@ public:
             useradd("root", "sjtu", "7", "yyu");
         }
     }
-    
-    
+
+
     void select(std::string isbn) {
         if (curUser.level < 3) {
             std::cout << "Invalid" << std::endl;
@@ -257,7 +257,7 @@ public:
             }
             nIndex.insertVal(parser.strToNum(name), curBookIndex);
             memcpy(curBook.name, name.c_str(), NameSize);
-        
+
         }
         if (author != "\"") {
             auto ss = std::string(curBook.author);
@@ -282,12 +282,12 @@ public:
             memcpy(curBook.keyword, keyword.c_str(), NameSize);
         }
         if (price != -1) {
-            
+
             if (curBook.price != -1) {
                 pIndex.deleteVal((int)(curBook.price * 10000000), curBookIndex);
             }
             pIndex.insertVal((int)(price * 10000000), curBookIndex);
-            
+
             curBook.price = price;
         }
         bData.replaceElement(curBookIndex, &curBook);
@@ -311,10 +311,10 @@ public:
             std::cout << "Invalid" << std::endl;
             return;
         }
-        
+
         std::vector<int> v;
         std::vector<Book> bookToShow;
-        
+
         Book hhh;
         if (isbn != "\"") {
             v = iIndex.qryforVal(parser.strToNum(isbn));
@@ -326,7 +326,7 @@ public:
             }
         } else if (name != "\"") {
             v = nIndex.qryforVal(parser.strToNum(name));
-            
+
             for (int i : v) {
                 bData.getElement(&hhh, i);
                 if (hhh.name == name) {
@@ -406,17 +406,15 @@ public:
             }
         }
     }
-    
+
     void load(std::string f);
     void work(std::fstream *input);
     void exec(std::string cmd) {
-        
-//        std::cout << "          " << cmd << std::endl;
         std::stringstream is(cmd);
         std::string key;
         is >> key;
         std::vector<std::string> v;
-        
+
         if (key != "modify"){
             v = parser.split(&is);
         }
@@ -584,7 +582,7 @@ void BookStore::work(std::fstream *input) {
             }
         }
     }
-    
+
 }
 
 #endif /* BookStore_hpp */
