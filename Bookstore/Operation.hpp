@@ -11,4 +11,17 @@
 
 #include <stdio.h>
 
+class Operation {
+public:
+    int useridx;
+    char cmd[200];
+    Operation() {
+        
+    }
+    Operation(const int idx, char const *c) {
+        useridx = idx;
+        memcpy(cmd, c, 200);
+    }
+};
+
 #endif /* Operation_hpp */

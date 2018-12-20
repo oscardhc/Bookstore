@@ -34,6 +34,7 @@
 		559DC33C21B8C2EC00B30947 /* DataBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataBase.hpp; sourceTree = "<group>"; };
 		55D5702D21BD5161006709E3 /* Trade.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Trade.hpp; sourceTree = "<group>"; };
 		55D5702F21BE65A3006709E3 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		55D6BE5021C77CDA0079D3B6 /* Operation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Operation.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +76,7 @@
 				559CF9BC21BA46AC00A40366 /* Block.hpp */,
 				5595808121B8198600D9F1A5 /* Book.hpp */,
 				55D5702D21BD5161006709E3 /* Trade.hpp */,
+				55D6BE5021C77CDA0079D3B6 /* Operation.hpp */,
 				5595807E21B7A43E00D9F1A5 /* Person.hpp */,
 			);
 			path = Bookstore;

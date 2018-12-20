@@ -19,6 +19,7 @@
 #include "DataBase.hpp"
 #include "Block.hpp"
 #include "Trade.hpp"
+#include "Operation.hpp"
 //#include "BFIndex.hpp"
 
 class Parser {
@@ -86,6 +87,7 @@ private:
     DataBase<Book, sizeof(Book)> bData;
     DataBase<Person, sizeof(Person)> pData;
     DataBase<Trade, sizeof(Trade)> tData;
+    DataBase<Operation, sizeof(Operation)> rData;
 
 public:
     BookStore() {
@@ -103,8 +105,8 @@ public:
             curUser.level = 233;
             useradd("root", "sjtu", "7", "yyu");
         }
+        rData.init("./report_data.bi");
     }
-
 
     void select(std::string isbn) {
         if (curUser.level < 3) {
@@ -406,10 +408,25 @@ public:
             }
         }
     }
+    void report(std::string userid = " ") {
+        std::cout << "REPORT!!!!!!" << std::endl;
+        Operation tmp;
+        Person usr;
+        for (int i = 0; i < rData.tot; i++) {
+            rData.getElement(&tmp, i);
+            pData.getElement(&usr, tmp.useridx);
+            if (userid == " " || std::string(usr.userid) == userid) {
+                std::cout << tmp.cmd << " by " << usr.name << "(" << usr.userid << ")" << std::endl;
+            }
+        }
+    }
 
     void load(std::string f);
     void work(std::fstream *input);
     void exec(std::string cmd) {
+        std::cout << cmd << std::endl;
+        Operation tmpopr(curUserIndex, cmd.c_str());
+        rData.addElement(&tmpopr);
         std::stringstream is(cmd);
         std::string key;
         is >> key;
@@ -544,6 +561,8 @@ public:
                 return;
             }
             buy(v[0], parser.parseStr(v[1]));
+        } else if (key == "report") {
+            report();
         } else {
             std::cout << "Invalid" << std::endl;
             return;
@@ -581,8 +600,7 @@ void BookStore::work(std::fstream *input) {
                 return;
             }
         }
-    }
-
+    }    
 }
 
 #endif /* BookStore_hpp */
