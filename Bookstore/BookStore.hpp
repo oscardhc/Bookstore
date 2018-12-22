@@ -409,7 +409,7 @@ public:
         }
     }
     void report(std::string userid = " ") {
-        std::cout << "REPORT!!!!!!" << std::endl;
+        std::cout << "-------------------- REPORT EMPOLYEE -------------------" << std::endl;
         Operation tmp;
         Person usr;
         for (int i = 0; i < rData.tot; i++) {
@@ -419,12 +419,22 @@ public:
                 std::cout << tmp.cmd << " by " << usr.name << "(" << usr.userid << ")" << std::endl;
             }
         }
+        std::cout << "--------------------------------------------------------" << std::endl;
+    }
+    void reportFinace() {
+        std::cout << "-------------------- REPORT FINANCE --------------------" << std::endl;
+        Trade tmp;
+        for (int i = 0; i < tData.tot; i++) {
+            tData.getElement(&tmp, i);
+            std::cout << "+" << tmp.in << "    -" << tmp.out << std::endl;
+        }
+        std::cout << "--------------------------------------------------------" << std::endl;
     }
 
     void load(std::string f);
     void work(std::fstream *input);
     void exec(std::string cmd) {
-        std::cout << cmd << std::endl;
+//        std::cout << cmd << std::endl;
         Operation tmpopr(curUserIndex, cmd.c_str());
         rData.addElement(&tmpopr);
         std::stringstream is(cmd);
@@ -562,7 +572,18 @@ public:
             }
             buy(v[0], parser.parseStr(v[1]));
         } else if (key == "report") {
+            if (v.size() == 1 && v[0] == "myself") {
+                report(curUser.userid);
+            } else if (v.size() == 1 && v[0] == "employee") {
+                report();
+            } else if (v.size() == 1 && v[0] == "finance") {
+                reportFinace();
+            } else {
+                
+            }
+        } else if (key == "log") {
             report();
+            reportFinace();
         } else {
             std::cout << "Invalid" << std::endl;
             return;
