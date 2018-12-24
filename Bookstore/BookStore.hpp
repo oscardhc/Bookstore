@@ -106,7 +106,6 @@ public:
         tData.init("./trade_data.bi");
         if (pData.tot == 0) {
             curUser.level = 233;
-            printf("!!!!\n");
             useradd("root", "sjtu", "7", "yyu");
         }
         rData.init("./report_data.bi");
