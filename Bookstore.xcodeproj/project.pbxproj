@@ -23,6 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5534496321D0BE7000848F50 /* UI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UI.hpp; sourceTree = "<group>"; };
 		553D1D9B21AE359F00BCC85E /* Bookstore */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Bookstore; sourceTree = BUILT_PRODUCTS_DIR; };
 		553D1D9E21AE359F00BCC85E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5555E55221C0B0B800689C70 /* BFIndex.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BFIndex.hpp; sourceTree = "<group>"; };
@@ -73,6 +74,7 @@
 				559CF9BF21BAADA900A40366 /* BookStore.hpp */,
 				5555E55221C0B0B800689C70 /* BFIndex.hpp */,
 				559DC33C21B8C2EC00B30947 /* DataBase.hpp */,
+				5534496321D0BE7000848F50 /* UI.hpp */,
 				559CF9BC21BA46AC00A40366 /* Block.hpp */,
 				5595808121B8198600D9F1A5 /* Book.hpp */,
 				55D5702D21BD5161006709E3 /* Trade.hpp */,

@@ -98,6 +98,10 @@ public:
         file.seekp(BaseSize + DataSize * index, std::ios::beg);
         file.write((char*)t, DataSize);
     }
+    
+    void removeTop() {
+        tot--;
+    }
 };
 
 #endif /* DataBase_hpp */

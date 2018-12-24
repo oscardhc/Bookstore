@@ -20,10 +20,10 @@
 #include "Block.hpp"
 #include "Trade.hpp"
 #include "Operation.hpp"
+#include "UI.hpp"
 //#include "BFIndex.hpp"
 
 class Parser {
-
 public:
     int strToNum(std::string str) {
         int n = (int)strlen(str.c_str()), bs = 131;
@@ -36,8 +36,11 @@ public:
     int parseStr(std::string str) {
         std::stringstream is(str);
         int n;
-        is >> n;
-        return n;
+        if (is >> n) {
+            return n;
+        } else {
+            throw 1;
+        }
     }
     std::vector<std::string> split(std::stringstream *is) {
         std::string tmp;
@@ -74,7 +77,6 @@ public:
         ret.push_back(s->substr(ls, s->length() - ls));
         return ret;
     }
-
 }parser;
 
 class BookStore {
@@ -88,6 +90,7 @@ private:
     DataBase<Person, sizeof(Person)> pData;
     DataBase<Trade, sizeof(Trade)> tData;
     DataBase<Operation, sizeof(Operation)> rData;
+    UI ui;
 
 public:
     BookStore() {
@@ -103,6 +106,7 @@ public:
         tData.init("./trade_data.bi");
         if (pData.tot == 0) {
             curUser.level = 233;
+            printf("!!!!\n");
             useradd("root", "sjtu", "7", "yyu");
         }
         rData.init("./report_data.bi");
@@ -110,7 +114,7 @@ public:
 
     void select(std::string isbn) {
         if (curUser.level < 3) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         int num = parser.strToNum(isbn);
@@ -132,37 +136,49 @@ public:
                 if (tmp.level < curUser.level || std::string(tmp.passwd) == v[1]) {
                     curUser = tmp;
                     curUserIndex = i;
+                    return;
                 } else {
-                    std::cout << "Invalid" << std::endl;
+                    std::cout << "Invalid" << std::endl; rData.removeTop();
+                    return;
                 }
-                return;
             }
         }
-        std::cout << "Invalid" << std::endl;
+        std::cout << "Invalid" << std::endl; rData.removeTop();
         return;
     }
     void logout() {
         if (curUser.level < 1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         curUserIndex = -1;
         curUser = Person();
     }
     void useradd(std::string userid, std::string passwd, std::string level, std::string name) {
-        if (curUser.level < 3 || curUser.level <= parser.parseStr(level)) {
-            std::cout << "Invalid" << std::endl;
+        if (curUser.level < 3) {
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         Person tmp;
         for (int i = 0; i < pData.tot; i++) {
             pData.getElement(&tmp, i);
             if (std::string(tmp.userid) == userid) {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         }
-        tmp = Person(userid.c_str(), passwd.c_str(), name.c_str(), parser.parseStr(level));
+        int lvl = 0;
+        try {
+            lvl = parser.parseStr(level);
+        } catch (...) {
+            std::cout << "Invalid" << std::endl; rData.removeTop();
+            return;
+        }
+        if (curUser.level <= lvl) {
+            std::cout << "Invalid" << std::endl; rData.removeTop();
+            return;
+        }
+        tmp = Person(userid.c_str(), passwd.c_str(), name.c_str(), lvl);
         pData.addElement(&tmp);
     }
     void regi(std::string userid, std::string passwd, std::string name) {
@@ -172,7 +188,7 @@ public:
     }
     void del(std::string userid) {
         if (curUser.level < 7) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         Person tmp;
@@ -183,12 +199,12 @@ public:
                 return;
             }
         }
-        std::cout << "Invalid" << std::endl;
+        std::cout << "Invalid" << std::endl; rData.removeTop();
         return;
     }
     void changePassword(std::string userid, std::string passwd, std::string oldpasswd = " ") {
         if (curUser.level < 1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         Person tmp;
@@ -202,48 +218,48 @@ public:
                         curUser = tmp;
                     }
                 } else {
-                    std::cout << "Invalid" << std::endl;
+                    std::cout << "Invalid" << std::endl; rData.removeTop();
                     return;
                 }
                 return;
             }
         }
-        std::cout << "Invalid" << std::endl;
+        std::cout << "Invalid" << std::endl; rData.removeTop();
         return;
     }
     void pswd(std::vector<std::string> v) {
         if (curUser.level < 1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         if (curUser.level == 7) {
             if (v.size() == 2) changePassword(v[0], v[1]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else {
             if (v.size() == 3) changePassword(v[0], v[2], v[1]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         }
     }
     void modify(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"", double price = -1.0) {
         if (curUser.level < 3) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         if (curBookIndex == -1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         if (isbn != "\"") {
             auto ss = std::string(curBook.ISBN);
             auto v = iIndex.qryforVal(parser.strToNum(isbn));
             if (!v.empty()) {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
             if (ss != "\"") {
@@ -296,11 +312,11 @@ public:
     }
     void import(int quantity, double totalPrice) {
         if (curUser.level < 3) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         if (curBookIndex == -1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         curBook.stock += quantity;
@@ -310,7 +326,7 @@ public:
     }
     void show(std::string isbn = "\"", std::string name = "\"", std::string author = "\"", std::string keyword = "\"") {
         if (curUser.level < 1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
 
@@ -366,7 +382,7 @@ public:
     }
     void showfinance(int n = -1) {
         if (curUser.level < 7) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         double in = 0.0, out = 0.0;
@@ -388,7 +404,7 @@ public:
     }
     void buy(std::string isbn, int quantity) {
         if (curUser.level < 1) {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
         std::vector<int> v = iIndex.qryforVal(parser.strToNum(isbn));
@@ -401,7 +417,7 @@ public:
                     Trade tmp(hhh.price * quantity, 0);
                     tData.addElement(&tmp);
                 } else {
-                    std::cout << "Invalid" << std::endl;
+                    std::cout << "Invalid" << std::endl; rData.removeTop();
                     return;
                 }
                 return;
@@ -409,19 +425,31 @@ public:
         }
     }
     void report(std::string userid = " ") {
+        if ((curUser.level < 3 && userid != " ") && curUser.level < 7) {
+            std::cout << "Invalid" << std::endl; rData.removeTop();
+            return;
+        }
         std::cout << "-------------------- REPORT EMPOLYEE -------------------" << std::endl;
         Operation tmp;
         Person usr;
         for (int i = 0; i < rData.tot; i++) {
             rData.getElement(&tmp, i);
-            pData.getElement(&usr, tmp.useridx);
-            if (userid == " " || std::string(usr.userid) == userid) {
-                std::cout << tmp.cmd << " by " << usr.name << "(" << usr.userid << ")" << std::endl;
+            if (tmp.useridx >= 0) pData.getElement(&usr, tmp.useridx);
+            if (userid == " " || (tmp.useridx >= 0 && std::string(usr.userid) == userid)) {
+                if(tmp.useridx == -1) {
+                    std::cout << tmp.cmd << " by GUEST"<< std::endl;
+                } else {
+                    std::cout << tmp.cmd << " by " << std::string(usr.name) << "(" << std::string(usr.userid) << ")" << std::endl;
+                }
             }
         }
         std::cout << "--------------------------------------------------------" << std::endl;
     }
     void reportFinace() {
+        if (curUser.level < 7) {
+            std::cout << "Invalid" << std::endl; rData.removeTop();
+            return;
+        }
         std::cout << "-------------------- REPORT FINANCE --------------------" << std::endl;
         Trade tmp;
         for (int i = 0; i < tData.tot; i++) {
@@ -429,6 +457,14 @@ public:
             std::cout << "+" << tmp.in << "    -" << tmp.out << std::endl;
         }
         std::cout << "--------------------------------------------------------" << std::endl;
+    }
+    void log() {
+        if (curUser.level < 7) {
+            std::cout << "Invalid" << std::endl; rData.removeTop();
+            return;
+        }
+        report();
+        reportFinace();
     }
 
     void load(std::string f);
@@ -448,7 +484,7 @@ public:
         if (key == "load") {
             if (v.size() == 1) load(v[0]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else if (key == "exit") {
@@ -456,7 +492,7 @@ public:
         } else if (key == "su") {
             if (v.size() > 0) su(v);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else if (key == "logout") {
@@ -464,19 +500,19 @@ public:
         } else if (key == "useradd") {
             if (v.size() == 4) useradd(v[0], v[1], v[2], v[3]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else if (key == "register") {
             if (v.size() == 3) regi(v[0], v[1], v[2]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else if (key == "delete") {
             if (v.size() == 1) del(v[0]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else if (key == "passwd") {
@@ -484,7 +520,7 @@ public:
         } else if (key == "select") {
             if (v.size()) select(v[0]);
             else {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
         } else if (key == "modify") {
@@ -523,7 +559,7 @@ public:
             }
         } else if (key == "import") {
             if (v.size() != 2) {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
             std::stringstream is(v[0] + " " + v[1]);
@@ -567,7 +603,7 @@ public:
             }
         } else if (key == "buy") {
             if (v.size() != 2) {
-                std::cout << "Invalid" << std::endl;
+                std::cout << "Invalid" << std::endl; rData.removeTop();
                 return;
             }
             buy(v[0], parser.parseStr(v[1]));
@@ -579,13 +615,15 @@ public:
             } else if (v.size() == 1 && v[0] == "finance") {
                 reportFinace();
             } else {
-                
+                std::cout << "Invalid" << std::endl; rData.removeTop();
+                return;
             }
         } else if (key == "log") {
-            report();
-            reportFinace();
+            log();
+        } else if (key == "help") {
+            ui.help();
         } else {
-            std::cout << "Invalid" << std::endl;
+            std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
     }
@@ -600,8 +638,8 @@ void BookStore::load(std::string f) {
     work(&cmdText);
 }
 void BookStore::work(std::fstream *input) {
-    char str[205];
     if (input->good()) {
+        char str[205];
         curUser = pData.getElement(0);
         curUserIndex = 0;
         while (input->getline(str, 200)) {
@@ -612,11 +650,12 @@ void BookStore::work(std::fstream *input) {
             }
         }
     } else {
+        ui.startingView();
         curUser = Person();
         curUserIndex = -1;
-        while (std::cin.getline(str, 200)) {
+        while (1) {
             try {
-                exec(std::string(str));
+                exec(ui.readCommand());
             } catch(int) {
                 return;
             }
