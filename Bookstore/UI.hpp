@@ -121,9 +121,11 @@ public:
         std::cin.ignore(100, '\n');
         std::string ret = command[id];
         char cot[205];
-        if(argText[id] != "") std::cout << "请依次输入" << argText[id] << std::endl;
-        std::cin.getline(cot, 200);
-        ret = ret + " " + std::string(cot);
+        if(argText[id] != "") {
+            std::cout << "请依次输入" << argText[id] << std::endl;
+            std::cin.getline(cot, 200);
+            ret = ret + " " + std::string(cot);
+        }
         std::cout << "开始执行   " << ret << std::endl;
         return ret;
     }

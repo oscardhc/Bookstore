@@ -442,7 +442,7 @@ public:
                     hhh /= 10;
                     cnt += 1;
                 }
-                std::cout << "LOG #" << i + 1;
+                std::cout << "LOG #" << cur;
                 for (int j = 0; j < 5 - cnt; j++) {
                     std::cout << " ";
                 }
@@ -696,7 +696,6 @@ void BookStore::load(std::string f) {
     work(&cmdText, 0);
 }
 void BookStore::work(std::fstream *input, int flag) {
-    std::cout << "WORK WITH FILE " << input->good() << std::endl;
     if (input->good()) {
         char str[205];
         curUser = pData.getElement(0);
