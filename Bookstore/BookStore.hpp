@@ -21,7 +21,6 @@
 #include "Trade.hpp"
 #include "Operation.hpp"
 #include "UI.hpp"
-//#include "BFIndex.hpp"
 
 class Parser {
 public:
@@ -80,6 +79,8 @@ public:
 }parser;
 
 class BookStore {
+    friend UI;
+    
 private:
     Person curUser;
     int curUserIndex;
@@ -173,7 +174,7 @@ public:
             std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
-        if (curUser.level <= lvl) {
+        if (curUser.level <= lvl || (lvl != 1 && lvl != 3 && lvl != 7)) {
             std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
@@ -428,34 +429,94 @@ public:
             std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
-        std::cout << "-------------------- REPORT EMPOLYEE -------------------" << std::endl;
+        std::cout << "+---------------------------------------------------------------REPORT LOG------------------------------------------------------------------+" << std::endl;
         Operation tmp;
         Person usr;
+        int cur = 0;
         for (int i = 0; i < rData.tot; i++) {
             rData.getElement(&tmp, i);
             if (tmp.useridx >= 0) pData.getElement(&usr, tmp.useridx);
             if (userid == " " || (tmp.useridx >= 0 && std::string(usr.userid) == userid)) {
+                int cnt = 0, hhh = ++cur;
+                while (hhh) {
+                    hhh /= 10;
+                    cnt += 1;
+                }
+                std::cout << "LOG #" << i + 1;
+                for (int j = 0; j < 5 - cnt; j++) {
+                    std::cout << " ";
+                }
+                std::cout << ": ";
                 if(tmp.useridx == -1) {
-                    std::cout << tmp.cmd << " by GUEST"<< std::endl;
+                    int cnt = 7;
+                    std::cout << "[guest]" ;
+                    for (int j = 0; j < 25 - cnt; j++) {
+                        std::cout << " ";
+                    }
+                    std::cout << "|  "<< tmp.cmd << std::endl;
                 } else {
-                    std::cout << tmp.cmd << " by " << std::string(usr.name) << "(" << std::string(usr.userid) << ")" << std::endl;
+                    int cnt = (int)strlen(usr.name) + (int)strlen(usr.userid) + 4;
+                    std::cout << "[" << usr.name << "(" << usr.userid << ")]";
+                    for (int j = 0; j < 25 - cnt; j++) {
+                        std::cout << " ";
+                    }
+                    std::cout << "|  " << tmp.cmd << std::endl;
                 }
             }
         }
-        std::cout << "--------------------------------------------------------" << std::endl;
+        std::cout << "+-------------------------------------------------------------------------------------------------------------------------------------------+" << std::endl;
     }
     void reportFinace() {
         if (curUser.level < 7) {
             std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
         }
-        std::cout << "-------------------- REPORT FINANCE --------------------" << std::endl;
+        std::cout << "+-------------------------------------------------------------REPORT FINANCE----------------------------------------------------------------+" << std::endl;
         Trade tmp;
+        double in = 0.0, out = 0.0;
         for (int i = 0; i < tData.tot; i++) {
             tData.getElement(&tmp, i);
-            std::cout << "+" << tmp.in << "    -" << tmp.out << std::endl;
+            in += tmp.in;
+            out += tmp.out;
+            int cnt = 0, hhh = i + 1;
+            while (hhh) {
+                hhh /= 10;
+                cnt += 1;
+            }
+            std::cout << "TRADE #" << i + 1;
+            for (int j = 0; j < 5 - cnt; j++) {
+                std::cout << " ";
+            }
+            std::cout << ":   +" << tmp.in;
+            cnt = 0;
+            hhh = (int)tmp.in;
+            if (hhh == 0) {
+                cnt = 1;
+            }
+            while (hhh) {
+                hhh /= 10;
+                cnt += 1;
+            }
+            for (int j = 0; j < 10 - cnt; j++) {
+                std::cout << " ";
+            }
+            std::cout << "| -" << tmp.out << std::endl;
         }
-        std::cout << "--------------------------------------------------------" << std::endl;
+        std::cout << std::endl << "IN TOTAL    :   +" << in;
+        int cnt = 0;
+        int hhh = (int)in;
+        if (hhh == 0) {
+            cnt = 1;
+        }
+        while (hhh) {
+            hhh /= 10;
+            cnt += 1;
+        }
+        for (int j = 0; j < 10 - cnt; j++) {
+            std::cout << " ";
+        }
+        std::cout << "| -" << out << std::endl;
+        std::cout << "+-------------------------------------------------------------------------------------------------------------------------------------------+" << std::endl;
     }
     void log() {
         if (curUser.level < 7) {
@@ -467,25 +528,23 @@ public:
     }
 
     void load(std::string f);
-    void work(std::fstream *input);
+    void work(std::fstream *input, int flag = 1);
     void exec(std::string cmd) {
-//        std::cout << cmd << std::endl;
         Operation tmpopr(curUserIndex, cmd.c_str());
         rData.addElement(&tmpopr);
         std::stringstream is(cmd);
         std::string key;
         is >> key;
         std::vector<std::string> v;
-
-        if (key != "modify"){
+        if (key != "modify" && key != "load"){
             v = parser.split(&is);
         }
         if (key == "load") {
-            if (v.size() == 1) load(v[0]);
-            else {
-                std::cout << "Invalid" << std::endl; rData.removeTop();
-                return;
-            }
+            curUser.level = 233;
+            std::vector<std::string> ar;
+            ar.push_back("root");
+            su(ar);
+            load(cmd.substr(5));
         } else if (key == "exit") {
             throw 1;
         } else if (key == "su") {
@@ -620,7 +679,7 @@ public:
         } else if (key == "log") {
             log();
         } else if (key == "help") {
-            ui.help();
+            exec(ui.help());
         } else {
             std::cout << "Invalid" << std::endl; rData.removeTop();
             return;
@@ -634,9 +693,10 @@ public:
 
 void BookStore::load(std::string f) {
     std::fstream cmdText(f, std::ios::in);
-    work(&cmdText);
+    work(&cmdText, 0);
 }
-void BookStore::work(std::fstream *input) {
+void BookStore::work(std::fstream *input, int flag) {
+    std::cout << "WORK WITH FILE " << input->good() << std::endl;
     if (input->good()) {
         char str[205];
         curUser = pData.getElement(0);
@@ -648,18 +708,21 @@ void BookStore::work(std::fstream *input) {
                 return;
             }
         }
-    } else {
+    } else if (flag) {
         ui.startingView();
         curUser = Person();
         curUserIndex = -1;
         while (1) {
             try {
-                exec(ui.readCommand());
+                exec(ui.readCommand(&curUser));
             } catch(int) {
                 return;
             }
         }
-    }    
+    } else {
+        std::cout << "Invalid" << std::endl; rData.removeTop();
+        return;
+    }
 }
 
 #endif /* BookStore_hpp */
